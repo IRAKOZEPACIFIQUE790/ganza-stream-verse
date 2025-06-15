@@ -45,7 +45,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ currentView, onNavigate }: AppSidebarProps) {
   return (
-    <Sidebar className="bg-black border-none shadow-2xl min-h-screen w-16 px-0 py-4 flex items-center">
+    <Sidebar className="bg-black border-none shadow-2xl min-h-screen w-16 px-0 py-4 flex items-center" collapsible="icon">
       <SidebarContent className="flex flex-col items-center w-full h-full gap-6">
         <SidebarGroup>
           <SidebarGroupContent>

@@ -212,7 +212,7 @@ const Index = () => {
     }
   };
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false} style={{ '--sidebar-width-icon': '4rem' } as React.CSSProperties}>
       <div className="flex min-h-screen w-full bg-black">
         {/* Sidebar */}
         <AppSidebar currentView={currentView} onNavigate={handleNavigation} />
