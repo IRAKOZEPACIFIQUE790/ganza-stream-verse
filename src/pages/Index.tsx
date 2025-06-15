@@ -218,7 +218,7 @@ const Index = () => {
         <AppSidebar currentView={currentView} onNavigate={handleNavigation} />
         
         {/* Main content area. Hide sidebar space on mobile */}
-        <main className="flex-1 flex flex-col min-h-screen ml-0 md:ml-0 bg-black">
+        <main className="flex-1 flex flex-col min-h-screen bg-black">
           {/* Top search bar - REMOVED */}
 
           {/* HERO SECTION */}
