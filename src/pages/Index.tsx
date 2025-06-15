@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Play, Plus, Info, Search, User, ChevronDown } from 'lucide-react';
+import { Play, Plus, Info, Search, User, ChevronDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock data for content
 const featuredContent = {
@@ -57,15 +58,45 @@ const Index = () => {
   const [selectedContent, setSelectedContent] = useState(null);
   const [myList, setMyList] = useState(new Set());
   const [currentUser, setCurrentUser] = useState('Profile 1');
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentView, setCurrentView] = useState('home'); // home, movies, shows, mylist
+  const { toast } = useToast();
 
   const toggleMyList = (contentId) => {
     const newList = new Set(myList);
     if (newList.has(contentId)) {
       newList.delete(contentId);
+      toast({
+        title: "Removed from My List",
+        description: "Content has been removed from your list.",
+      });
     } else {
       newList.add(contentId);
+      toast({
+        title: "Added to My List",
+        description: "Content has been added to your list.",
+      });
     }
     setMyList(newList);
+  };
+
+  const playContent = (content) => {
+    setIsPlaying(true);
+    toast({
+      title: "Playing Now",
+      description: `Now playing: ${content.title}`,
+    });
+    // In a real app, this would navigate to video player
+    setTimeout(() => setIsPlaying(false), 3000);
+  };
+
+  const handleNavigation = (view) => {
+    setCurrentView(view);
+    setSearchQuery(''); // Clear search when navigating
+    toast({
+      title: "Navigation",
+      description: `Switched to ${view.charAt(0).toUpperCase() + view.slice(1)}`,
+    });
   };
 
   const filteredContent = searchQuery 
@@ -74,18 +105,63 @@ const Index = () => {
       )
     : [];
 
+  const myListContent = contentRows.flatMap(row => row.items).filter(item => 
+    myList.has(item.id)
+  );
+
+  const movieContent = contentRows.flatMap(row => row.items).filter(item => 
+    Math.random() > 0.5 // Mock filter for movies vs shows
+  );
+
+  const showContent = contentRows.flatMap(row => row.items).filter(item => 
+    !movieContent.includes(item)
+  );
+
+  const getCurrentContent = () => {
+    switch (currentView) {
+      case 'movies':
+        return movieContent;
+      case 'shows':
+        return showContent;
+      case 'mylist':
+        return myListContent;
+      default:
+        return [];
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-8">
-            <h1 className="text-3xl font-bold text-red-600">GanZa</h1>
+            <h1 className="text-3xl font-bold text-red-600 cursor-pointer" onClick={() => handleNavigation('home')}>GanZa</h1>
             <nav className="hidden md:flex space-x-6">
-              <a href="#" className="hover:text-gray-300 transition-colors">Home</a>
-              <a href="#" className="hover:text-gray-300 transition-colors">Movies</a>
-              <a href="#" className="hover:text-gray-300 transition-colors">TV Shows</a>
-              <a href="#" className="hover:text-gray-300 transition-colors">My List</a>
+              <button 
+                onClick={() => handleNavigation('home')}
+                className={`hover:text-gray-300 transition-colors ${currentView === 'home' ? 'text-white font-semibold' : 'text-gray-400'}`}
+              >
+                Home
+              </button>
+              <button 
+                onClick={() => handleNavigation('movies')}
+                className={`hover:text-gray-300 transition-colors ${currentView === 'movies' ? 'text-white font-semibold' : 'text-gray-400'}`}
+              >
+                Movies
+              </button>
+              <button 
+                onClick={() => handleNavigation('shows')}
+                className={`hover:text-gray-300 transition-colors ${currentView === 'shows' ? 'text-white font-semibold' : 'text-gray-400'}`}
+              >
+                TV Shows
+              </button>
+              <button 
+                onClick={() => handleNavigation('mylist')}
+                className={`hover:text-gray-300 transition-colors ${currentView === 'mylist' ? 'text-white font-semibold' : 'text-gray-400'}`}
+              >
+                My List
+              </button>
             </nav>
           </div>
           <div className="flex items-center space-x-4">
@@ -112,35 +188,113 @@ const Index = () => {
         <div className="pt-24 pb-8">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6">Search Results for "{searchQuery}"</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {filteredContent.map((item) => (
-                <Card key={item.id} className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer">
-                  <CardContent className="p-0">
-                    <img src={item.image} alt={item.title} className="w-full h-64 object-cover rounded-t" />
-                    <div className="p-3">
-                      <h3 className="font-semibold text-sm truncate">{item.title}</h3>
-                      <div className="flex items-center justify-between mt-2">
-                        <Badge variant="secondary" className="text-xs">★ {item.rating}</Badge>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => toggleMyList(item.id)}
-                          className="h-6 w-6 p-0"
-                        >
-                          <Plus className={`h-3 w-3 ${myList.has(item.id) ? 'text-red-500' : 'text-white'}`} />
-                        </Button>
+            {filteredContent.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {filteredContent.map((item) => (
+                  <Card key={item.id} className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer">
+                    <CardContent className="p-0">
+                      <img src={item.image} alt={item.title} className="w-full h-64 object-cover rounded-t" />
+                      <div className="p-3">
+                        <h3 className="font-semibold text-sm truncate">{item.title}</h3>
+                        <div className="flex items-center justify-between mt-2">
+                          <Badge variant="secondary" className="text-xs">★ {item.rating}</Badge>
+                          <div className="flex space-x-1">
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => playContent(item)}
+                              className="h-6 w-6 p-0"
+                            >
+                              <Play className="h-3 w-3" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => toggleMyList(item.id)}
+                              className="h-6 w-6 p-0"
+                            >
+                              {myList.has(item.id) ? 
+                                <Check className="h-3 w-3 text-red-500" /> : 
+                                <Plus className="h-3 w-3 text-white" />
+                              }
+                            </Button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-gray-400">No results found for "{searchQuery}"</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Category View (Movies, Shows, My List) */}
+      {!searchQuery && currentView !== 'home' && (
+        <div className="pt-24 pb-8">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-8">
+              {currentView === 'mylist' && 'My List'}
+              {currentView === 'movies' && 'Movies'}
+              {currentView === 'shows' && 'TV Shows'}
+            </h2>
+            {getCurrentContent().length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {getCurrentContent().map((item) => (
+                  <Card key={item.id} className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer group">
+                    <CardContent className="p-0 relative">
+                      <img src={item.image} alt={item.title} className="w-full h-64 object-cover rounded-t" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <div className="flex space-x-2">
+                          <Button 
+                            size="sm" 
+                            className="bg-white text-black hover:bg-gray-200"
+                            onClick={() => playContent(item)}
+                          >
+                            <Play className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleMyList(item.id);
+                            }}
+                            className="bg-black/50 hover:bg-black/70"
+                          >
+                            {myList.has(item.id) ? 
+                              <Check className="h-4 w-4 text-red-500" /> : 
+                              <Plus className="h-4 w-4 text-white" />
+                            }
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <h3 className="font-semibold text-sm truncate">{item.title}</h3>
+                        <Badge variant="secondary" className="text-xs mt-2">★ {item.rating}</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-gray-400">
+                  {currentView === 'mylist' ? 'Your list is empty. Add some content to get started!' : 'No content available in this category.'}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {/* Hero Section */}
-      {!searchQuery && (
+      {!searchQuery && currentView === 'home' && (
         <section className="relative h-screen flex items-center">
           <div 
             className="absolute inset-0 bg-cover bg-center"
@@ -167,9 +321,14 @@ const Index = () => {
                 {featuredContent.description}
               </p>
               <div className="flex space-x-4">
-                <Button size="lg" className="bg-white text-black hover:bg-gray-200">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-black hover:bg-gray-200"
+                  onClick={() => playContent(featuredContent)}
+                  disabled={isPlaying}
+                >
                   <Play className="mr-2 h-5 w-5" />
-                  Play
+                  {isPlaying ? 'Playing...' : 'Play'}
                 </Button>
                 <Dialog>
                   <DialogTrigger asChild>
@@ -189,12 +348,31 @@ const Index = () => {
                           <span>{featuredContent.duration}</span>
                         </div>
                         <p className="text-gray-300 mb-4">{featuredContent.description}</p>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 mb-4">
                           {featuredContent.genre.map((genre) => (
                             <Badge key={genre} variant="outline" className="text-white border-gray-500">
                               {genre}
                             </Badge>
                           ))}
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button 
+                            onClick={() => playContent(featuredContent)}
+                            className="bg-white text-black hover:bg-gray-200"
+                          >
+                            <Play className="mr-2 h-4 w-4" />
+                            Play
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={() => toggleMyList(featuredContent.id)}
+                          >
+                            {myList.has(featuredContent.id) ? 
+                              <Check className="mr-2 h-4 w-4 text-red-500" /> : 
+                              <Plus className="mr-2 h-4 w-4" />
+                            }
+                            My List
+                          </Button>
                         </div>
                       </DialogDescription>
                     </DialogHeader>
@@ -206,7 +384,10 @@ const Index = () => {
                   onClick={() => toggleMyList(featuredContent.id)}
                   className="border border-gray-600 hover:bg-gray-800"
                 >
-                  <Plus className={`mr-2 h-5 w-5 ${myList.has(featuredContent.id) ? 'text-red-500' : 'text-white'}`} />
+                  {myList.has(featuredContent.id) ? 
+                    <Check className="mr-2 h-5 w-5 text-red-500" /> : 
+                    <Plus className="mr-2 h-5 w-5 text-white" />
+                  }
                   My List
                 </Button>
               </div>
@@ -216,7 +397,7 @@ const Index = () => {
       )}
 
       {/* Content Rows */}
-      {!searchQuery && (
+      {!searchQuery && currentView === 'home' && (
         <section className="py-16 space-y-12">
           {contentRows.map((row, rowIndex) => (
             <div key={rowIndex} className="container mx-auto px-4">
@@ -231,7 +412,11 @@ const Index = () => {
                       <img src={item.image} alt={item.title} className="w-full h-72 object-cover rounded-t" />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                         <div className="flex space-x-2">
-                          <Button size="sm" className="bg-white text-black hover:bg-gray-200">
+                          <Button 
+                            size="sm" 
+                            className="bg-white text-black hover:bg-gray-200"
+                            onClick={() => playContent(item)}
+                          >
                             <Play className="h-4 w-4" />
                           </Button>
                           <Button 
@@ -243,7 +428,10 @@ const Index = () => {
                             }}
                             className="bg-black/50 hover:bg-black/70"
                           >
-                            <Plus className={`h-4 w-4 ${myList.has(item.id) ? 'text-red-500' : 'text-white'}`} />
+                            {myList.has(item.id) ? 
+                              <Check className="h-4 w-4 text-red-500" /> : 
+                              <Plus className="h-4 w-4 text-white" />
+                            }
                           </Button>
                         </div>
                       </div>
@@ -271,8 +459,8 @@ const Index = () => {
             <div>
               <h4 className="font-semibold mb-4">Browse</h4>
               <div className="space-y-2 text-sm text-gray-400">
-                <p>Movies</p>
-                <p>TV Shows</p>
+                <button onClick={() => handleNavigation('movies')} className="block hover:text-white transition-colors">Movies</button>
+                <button onClick={() => handleNavigation('shows')} className="block hover:text-white transition-colors">TV Shows</button>
                 <p>Originals</p>
                 <p>New Releases</p>
               </div>
