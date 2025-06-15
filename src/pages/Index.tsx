@@ -7,13 +7,13 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 
-// Mock data for content
+// Mock data for content with African/Rwandan imagery
 const featuredContent = {
   id: 1,
   title: "Breaking Boundaries",
   description: "A thrilling sci-fi adventure that pushes the limits of human imagination. When a team of scientists discovers a way to travel between parallel dimensions, they must face the consequences of their groundbreaking discovery.",
-  backdrop: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=1920&h=1080&fit=crop",
-  trailer: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=800&h=400&fit=crop",
+  backdrop: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1920&h=1080&fit=crop",
+  trailer: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=400&fit=crop",
   genre: ["Sci-Fi", "Thriller", "Action"],
   rating: "9.2",
   year: "2024",
@@ -24,31 +24,31 @@ const contentRows = [
   {
     title: "Trending Now",
     items: [
-      { id: 1, title: "Space Odyssey", image: "https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=300&h=450&fit=crop", rating: "8.9" },
-      { id: 2, title: "Ocean Deep", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=450&fit=crop", rating: "8.5" },
-      { id: 3, title: "City Lights", image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=300&h=450&fit=crop", rating: "9.1" },
-      { id: 4, title: "Forest Tales", image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=450&fit=crop", rating: "8.7" },
-      { id: 5, title: "Desert Storm", image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=300&h=450&fit=crop", rating: "8.3" }
+      { id: 1, title: "Rwandan Warriors", image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=300&h=450&fit=crop", rating: "8.9", genre: ["Action"] },
+      { id: 2, title: "African Horizons", image: "https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?w=300&h=450&fit=crop", rating: "8.5", genre: ["Drama"] },
+      { id: 3, title: "Kigali Nights", image: "https://images.unsplash.com/photo-1544198365-f5d60b6d8190?w=300&h=450&fit=crop", rating: "9.1", genre: ["Thriller"] },
+      { id: 4, title: "Safari Chronicles", image: "https://images.unsplash.com/photo-1493962853295-0fd70327578a?w=300&h=450&fit=crop", rating: "8.7", genre: ["Adventure"] },
+      { id: 5, title: "Ubuntu Stories", image: "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?w=300&h=450&fit=crop", rating: "8.3", genre: ["Drama"] }
     ]
   },
   {
     title: "Action & Adventure",
     items: [
-      { id: 6, title: "Thunder Strike", image: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=300&h=450&fit=crop", rating: "8.8" },
-      { id: 7, title: "Mountain Peak", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=450&fit=crop", rating: "8.4" },
-      { id: 8, title: "River Run", image: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=300&h=450&fit=crop", rating: "8.6" },
-      { id: 9, title: "Sky High", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=450&fit=crop", rating: "9.0" },
-      { id: 10, title: "Wind Walker", image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=450&fit=crop", rating: "8.2" }
+      { id: 6, title: "Virunga Legends", image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3?w=300&h=450&fit=crop", rating: "8.8", genre: ["Action"] },
+      { id: 7, title: "East African Quest", image: "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=300&h=450&fit=crop", rating: "8.4", genre: ["Action", "Adventure"] },
+      { id: 8, title: "Nile Adventures", image: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=300&h=450&fit=crop", rating: "8.6", genre: ["Adventure"] },
+      { id: 9, title: "Highland Warriors", image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=450&fit=crop", rating: "9.0", genre: ["Action"] },
+      { id: 10, title: "Serengeti Winds", image: "https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?w=300&h=450&fit=crop", rating: "8.2", genre: ["Adventure"] }
     ]
   },
   {
     title: "Drama Series",
     items: [
-      { id: 11, title: "Midnight Stories", image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=300&h=450&fit=crop", rating: "9.3" },
-      { id: 12, title: "Garden Path", image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=450&fit=crop", rating: "8.9" },
-      { id: 13, title: "Blue Horizon", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=450&fit=crop", rating: "8.7" },
-      { id: 14, title: "Golden Hour", image: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=300&h=450&fit=crop", rating: "9.1" },
-      { id: 15, title: "Silver Screen", image: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=300&h=450&fit=crop", rating: "8.5" }
+      { id: 11, title: "Rwandan Heritage", image: "https://images.unsplash.com/photo-1544198365-f5d60b6d8190?w=300&h=450&fit=crop", rating: "9.3", genre: ["Drama"] },
+      { id: 12, title: "Village Tales", image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=300&h=450&fit=crop", rating: "8.9", genre: ["Drama"] },
+      { id: 13, title: "African Dreams", image: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=300&h=450&fit=crop", rating: "8.7", genre: ["Drama"] },
+      { id: 14, title: "Golden Savanna", image: "https://images.unsplash.com/photo-1493962853295-0fd70327578a?w=300&h=450&fit=crop", rating: "9.1", genre: ["Drama"] },
+      { id: 15, title: "Modern Rwanda", image: "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?w=300&h=450&fit=crop", rating: "8.5", genre: ["Drama"] }
     ]
   }
 ];
@@ -59,7 +59,8 @@ const Index = () => {
   const [myList, setMyList] = useState(new Set());
   const [currentUser, setCurrentUser] = useState('Profile 1');
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentView, setCurrentView] = useState('home'); // home, movies, shows, mylist
+  const [currentView, setCurrentView] = useState('home');
+  const [selectedGenre, setSelectedGenre] = useState('');
   const { toast } = useToast();
 
   const toggleMyList = (contentId) => {
@@ -92,10 +93,21 @@ const Index = () => {
 
   const handleNavigation = (view) => {
     setCurrentView(view);
-    setSearchQuery(''); // Clear search when navigating
+    setSearchQuery('');
+    setSelectedGenre('');
     toast({
       title: "Navigation",
       description: `Switched to ${view.charAt(0).toUpperCase() + view.slice(1)}`,
+    });
+  };
+
+  const handleGenreFilter = (genre) => {
+    setSelectedGenre(genre);
+    setCurrentView('genre');
+    setSearchQuery('');
+    toast({
+      title: "Genre Filter",
+      description: `Showing ${genre} content`,
     });
   };
 
@@ -110,11 +122,15 @@ const Index = () => {
   );
 
   const movieContent = contentRows.flatMap(row => row.items).filter(item => 
-    Math.random() > 0.5 // Mock filter for movies vs shows
+    Math.random() > 0.5
   );
 
   const showContent = contentRows.flatMap(row => row.items).filter(item => 
     !movieContent.includes(item)
+  );
+
+  const genreContent = contentRows.flatMap(row => row.items).filter(item => 
+    item.genre && item.genre.some(g => g.toLowerCase() === selectedGenre.toLowerCase())
   );
 
   const getCurrentContent = () => {
@@ -125,8 +141,25 @@ const Index = () => {
         return showContent;
       case 'mylist':
         return myListContent;
+      case 'genre':
+        return genreContent;
       default:
         return [];
+    }
+  };
+
+  const getCurrentTitle = () => {
+    switch (currentView) {
+      case 'movies':
+        return 'Movies';
+      case 'shows':
+        return 'TV Shows';
+      case 'mylist':
+        return 'My List';
+      case 'genre':
+        return `${selectedGenre} Movies & Shows`;
+      default:
+        return '';
     }
   };
 
@@ -234,15 +267,11 @@ const Index = () => {
         </div>
       )}
 
-      {/* Category View (Movies, Shows, My List) */}
+      {/* Category View (Movies, Shows, My List, Genre) */}
       {!searchQuery && currentView !== 'home' && (
         <div className="pt-24 pb-8">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8">
-              {currentView === 'mylist' && 'My List'}
-              {currentView === 'movies' && 'Movies'}
-              {currentView === 'shows' && 'TV Shows'}
-            </h2>
+            <h2 className="text-3xl font-bold mb-8">{getCurrentTitle()}</h2>
             {getCurrentContent().length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {getCurrentContent().map((item) => (
@@ -285,7 +314,9 @@ const Index = () => {
             ) : (
               <div className="text-center py-16">
                 <p className="text-gray-400">
-                  {currentView === 'mylist' ? 'Your list is empty. Add some content to get started!' : 'No content available in this category.'}
+                  {currentView === 'mylist' ? 'Your list is empty. Add some content to get started!' : 
+                   currentView === 'genre' ? `No ${selectedGenre} content available.` :
+                   'No content available in this category.'}
                 </p>
               </div>
             )}
@@ -312,7 +343,12 @@ const Index = () => {
               </div>
               <div className="flex flex-wrap gap-2 mb-6">
                 {featuredContent.genre.map((genre) => (
-                  <Badge key={genre} variant="outline" className="text-white border-gray-500">
+                  <Badge 
+                    key={genre} 
+                    variant="outline" 
+                    className="text-white border-gray-500 cursor-pointer hover:bg-red-600 hover:border-red-600 transition-colors"
+                    onClick={() => handleGenreFilter(genre)}
+                  >
                     {genre}
                   </Badge>
                 ))}
@@ -369,7 +405,7 @@ const Index = () => {
                           >
                             {myList.has(featuredContent.id) ? 
                               <Check className="mr-2 h-4 w-4 text-red-500" /> : 
-                              <Plus className="mr-2 h-4 w-4" />
+                              <Plus className="mr-2 h-4 w-4 text-white" />
                             }
                             My List
                           </Button>
@@ -454,38 +490,98 @@ const Index = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-red-600 mb-4">GanZa</h3>
-              <p className="text-gray-400 text-sm">Your premium streaming destination</p>
+              <p className="text-gray-400 text-sm">Your premium streaming destination for African content</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Browse</h4>
               <div className="space-y-2 text-sm text-gray-400">
-                <button onClick={() => handleNavigation('movies')} className="block hover:text-white transition-colors">Movies</button>
-                <button onClick={() => handleNavigation('shows')} className="block hover:text-white transition-colors">TV Shows</button>
-                <p>Originals</p>
-                <p>New Releases</p>
+                <button 
+                  onClick={() => handleNavigation('movies')} 
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
+                  Movies
+                </button>
+                <button 
+                  onClick={() => handleNavigation('shows')} 
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
+                  TV Shows
+                </button>
+                <button 
+                  onClick={() => handleGenreFilter('Action')} 
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
+                  Action & Adventure
+                </button>
+                <button 
+                  onClick={() => handleGenreFilter('Drama')} 
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
+                  Drama Series
+                </button>
               </div>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Account</h4>
               <div className="space-y-2 text-sm text-gray-400">
-                <p>Manage Profiles</p>
-                <p>Account Settings</p>
-                <p>Help Center</p>
-                <p>Sign Out</p>
+                <button className="block hover:text-white transition-colors cursor-pointer">
+                  Manage Profiles
+                </button>
+                <button className="block hover:text-white transition-colors cursor-pointer">
+                  Account Settings
+                </button>
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "Help Center",
+                      description: "Opening help resources...",
+                    });
+                  }}
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
+                  Help Center
+                </button>
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "Sign Out",
+                      description: "Signing out of your account...",
+                    });
+                  }}
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
+                  Sign Out
+                </button>
               </div>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Connect</h4>
               <div className="space-y-2 text-sm text-gray-400">
-                <p>Privacy Policy</p>
-                <p>Terms of Service</p>
-                <p>Contact Us</p>
-                <p>About GanZa</p>
+                <button className="block hover:text-white transition-colors cursor-pointer">
+                  Privacy Policy
+                </button>
+                <button className="block hover:text-white transition-colors cursor-pointer">
+                  Terms of Service
+                </button>
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "Contact Us",
+                      description: "Call us at +250796011540",
+                    });
+                  }}
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
+                  Contact Us: +250796011540
+                </button>
+                <button className="block hover:text-white transition-colors cursor-pointer">
+                  About GanZa
+                </button>
               </div>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-            <p>&copy; 2024 GanZa. All rights reserved.</p>
+            <p>&copy; 2024 GanZa by Pacifique. All rights reserved.</p>
           </div>
         </div>
       </footer>
