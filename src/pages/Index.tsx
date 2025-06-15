@@ -219,21 +219,10 @@ const Index = () => {
         
         {/* Main content area. Hide sidebar space on mobile */}
         <main className="flex-1 flex flex-col min-h-screen ml-0 md:ml-0 bg-black">
-          {/* Top search bar */}
-          <div className="flex justify-end pr-8 pt-8">
-            <div className="relative w-full max-w-md ml-auto">
-              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <Input
-                placeholder="Search titles..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="bg-black/70 border-gray-700 pl-10 w-full rounded-full text-base"
-              />
-            </div>
-          </div>
+          {/* Top search bar - REMOVED */}
 
           {/* HERO SECTION */}
-          {!searchQuery && currentView === "home" && (
+          {currentView === "home" && (
             <section className="relative flex flex-col min-h-[52vh] md:min-h-[55vh] xl:min-h-[450px] px-0 pb-4 pt-4 overflow-hidden">
               {/* BG HERO IMAGE with dark overlay */}
               <div
@@ -276,8 +265,9 @@ const Index = () => {
                       <Play className="mr-1 h-7 w-7" fill="currentColor" />
                       {isPlaying ? "Playing..." : "Play"}
                     </Button>
-                    <Button size="lg" variant="secondary" className="bg-white/85 text-black hover:bg-white px-7 py-3 rounded-lg text-lg font-bold shadow-xl border-none">
-                      Watch Trailer
+                    <Button size="lg" variant="secondary" className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm px-7 py-3 rounded-lg text-lg font-bold shadow-xl border border-white/30 flex items-center gap-2">
+                      <Info className="mr-1 h-7 w-7" />
+                      More Info
                     </Button>
                   </div>
                 </div>
@@ -286,7 +276,7 @@ const Index = () => {
           )}
 
           {/* Content Rows */}
-          {!searchQuery && currentView === "home" && (
+          {currentView === "home" && (
             <section className="flex flex-col gap-12 py-8 pr-2">
               {contentRows.map((row, rowIndex) => (
                 <div key={rowIndex} className="ml-8">
@@ -329,38 +319,64 @@ const Index = () => {
             </section>
           )}
 
-          {/* Search Results */}
-          {searchQuery && <div className="pt-24 pb-8">
+          {/* Search View */}
+          {currentView === 'search' && (
+            <div className="pt-24 pb-8 w-full">
               <div className="container mx-auto px-4">
-                <h2 className="text-2xl font-bold mb-6">Search Results for "{searchQuery}"</h2>
-                {filteredContent.length > 0 ? <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    {filteredContent.map(item => <Card key={item.id} className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer">
-                        <CardContent className="p-0">
-                          <img src={item.image} alt={item.title} className="w-full h-64 object-cover rounded-t" />
-                          <div className="p-3">
-                            <h3 className="font-semibold text-sm truncate">{item.title}</h3>
-                            <div className="flex items-center justify-between mt-2">
-                              <Badge variant="secondary" className="text-xs">★ {item.rating}</Badge>
-                              <div className="flex space-x-1">
-                                <Button size="sm" variant="ghost" onClick={() => playContent(item)} className="h-6 w-6 p-0">
-                                  <Play className="h-3 w-3" />
-                                </Button>
-                                <Button size="sm" variant="ghost" onClick={() => toggleMyList(item.id)} className="h-6 w-6 p-0">
-                                  {myList.has(item.id) ? <Check className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3 text-white" />}
-                                </Button>
+                <div className="relative w-full max-w-xl mx-auto mb-10">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 pointer-events-none" />
+                  <Input
+                    placeholder="Search for titles, genres, people..."
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className="bg-gray-900 border-gray-800 focus:ring-red-600 focus:border-red-600 pl-14 pr-4 py-3 w-full rounded-md text-lg h-16"
+                    autoFocus
+                  />
+                </div>
+                
+                {searchQuery ? (
+                  filteredContent.length > 0 ? (
+                    <div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        {filteredContent.map(item => <Card key={item.id} className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer">
+                            <CardContent className="p-0">
+                              <img src={item.image} alt={item.title} className="w-full h-64 object-cover rounded-t" />
+                              <div className="p-3">
+                                <h3 className="font-semibold text-sm truncate">{item.title}</h3>
+                                <div className="flex items-center justify-between mt-2">
+                                  <Badge variant="secondary" className="text-xs">★ {item.rating}</Badge>
+                                  <div className="flex space-x-1">
+                                    <Button size="sm" variant="ghost" onClick={() => playContent(item)} className="h-6 w-6 p-0">
+                                      <Play className="h-3 w-3" />
+                                    </Button>
+                                    <Button size="sm" variant="ghost" onClick={() => toggleMyList(item.id)} className="h-6 w-6 p-0">
+                                      {myList.has(item.id) ? <Check className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3 text-white" />}
+                                    </Button>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>)}
-                  </div> : <div className="text-center py-16">
-                    <p className="text-gray-400">No results found for "{searchQuery}"</p>
-                  </div>}
+                            </CardContent>
+                          </Card>)}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-16">
+                      <p className="text-gray-400">No results found for "{searchQuery}"</p>
+                    </div>
+                  )
+                ) : (
+                  <div className="text-center py-16">
+                      <h3 className="text-2xl font-bold text-white mb-4">What are you looking for?</h3>
+                      <p className="text-gray-400">Search for movies, TV shows, and more.</p>
+                  </div>
+                )}
               </div>
-            </div>}
+            </div>
+          )}
 
           {/* Category View (Movies, Shows, My List, Genre) */}
-          {!searchQuery && currentView !== 'home' && <div className="pt-24 pb-8">
+          {currentView !== 'home' && currentView !== 'search' && (
+            <div className="pt-24 pb-8">
               <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold mb-8">{getCurrentTitle()}</h2>
                 {getCurrentContent().length > 0 ? <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -392,7 +408,7 @@ const Index = () => {
                     </p>
                   </div>}
               </div>
-            </div>}
+            </div>)}
 
           {/* Footer */}
           <footer className="bg-gray-900 py-12 mt-16">

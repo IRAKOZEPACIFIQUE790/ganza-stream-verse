@@ -1,5 +1,5 @@
 
-import { Home, Video, List, Tv } from "lucide-react";
+import { Home, Video, List, Tv, Search } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,19 +12,24 @@ import {
 
 const items = [
   {
+    title: "Search",
+    view: "search",
+    icon: Search,
+  },
+  {
     title: "Home",
     view: "home",
     icon: Home,
   },
   {
-    title: "Movies",
-    view: "movies",
-    icon: Video,
-  },
-  {
     title: "TV Shows",
     view: "shows",
     icon: Tv,
+  },
+  {
+    title: "Movies",
+    view: "movies",
+    icon: Video,
   },
   {
     title: "My List",
@@ -57,12 +62,12 @@ export function AppSidebar({ currentView, onNavigate }: AppSidebarProps) {
                     {/* Active Indicator */}
                     <span
                       className={`absolute left-0 top-1/2 -translate-y-1/2 
-                        h-8 w-1 rounded-r-lg bg-red-600 transition-all
+                        h-6 w-1 rounded-r-lg bg-red-600 transition-all
                         ${currentView === item.view ? "opacity-100" : "opacity-0"}
                       `}
                     />
                     <item.icon size={26} />
-                    <span className="text-xs font-semibold hidden xl:inline transition-all">
+                    <span className="text-xs font-semibold hidden transition-all">
                       {item.title}
                     </span>
                   </SidebarMenuButton>
