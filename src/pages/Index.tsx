@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Play, Plus, Info, Search, User, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -303,7 +302,7 @@ const Index = () => {
         </div>
       </footer>
 
-      <style jsx global>{`
+      <style>{`
         .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
