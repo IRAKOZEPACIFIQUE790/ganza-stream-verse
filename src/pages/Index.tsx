@@ -10,14 +10,14 @@ import { useToast } from '@/hooks/use-toast';
 // Mock data for content with African/Rwandan imagery
 const featuredContent = {
   id: 1,
-  title: "Breaking Boundaries",
-  description: "A thrilling sci-fi adventure that pushes the limits of human imagination. When a team of scientists discovers a way to travel between parallel dimensions, they must face the consequences of their groundbreaking discovery.",
+  title: "Heritage of the Hills",
+  description: "Experience the breathtaking beauty and rich cultural tapestry of Rwanda through this captivating documentary series. Journey through the land of a thousand hills as we explore ancient traditions, modern innovations, and the inspiring stories of resilience that define the heart of Africa. From the bustling streets of Kigali to the serene landscapes of Volcanoes National Park, discover the untold stories that celebrate the spirit of unity and progress.",
   backdrop: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1920&h=1080&fit=crop",
   trailer: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=400&fit=crop",
-  genre: ["Sci-Fi", "Thriller", "Action"],
-  rating: "9.2",
+  genre: ["Documentary", "Culture", "Nature"],
+  rating: "9.4",
   year: "2024",
-  duration: "2h 15m"
+  duration: "3h 45m"
 };
 
 const contentRows = [
@@ -334,42 +334,43 @@ const Index = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
           </div>
           <div className="relative container mx-auto px-4 z-10">
-            <div className="max-w-2xl">
-              <h1 className="text-5xl md:text-7xl font-bold mb-4">{featuredContent.title}</h1>
-              <div className="flex items-center space-x-4 mb-4">
-                <Badge className="bg-red-600 text-white">★ {featuredContent.rating}</Badge>
-                <span className="text-gray-300">{featuredContent.year}</span>
-                <span className="text-gray-300">{featuredContent.duration}</span>
+            <div className="max-w-3xl">
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 hero-text-shadow">{featuredContent.title}</h1>
+              <div className="flex items-center space-x-4 mb-6">
+                <Badge className="bg-red-600 text-white text-lg px-3 py-1">★ {featuredContent.rating}</Badge>
+                <span className="text-gray-300 text-lg">{featuredContent.year}</span>
+                <span className="text-gray-300 text-lg">{featuredContent.duration}</span>
+                <Badge className="bg-green-600 text-white">NEW</Badge>
               </div>
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-3 mb-8">
                 {featuredContent.genre.map((genre) => (
                   <Badge 
                     key={genre} 
                     variant="outline" 
-                    className="text-white border-gray-500 cursor-pointer hover:bg-red-600 hover:border-red-600 transition-colors"
+                    className="text-white border-gray-400 cursor-pointer hover:bg-red-600 hover:border-red-600 transition-colors text-sm px-3 py-1"
                     onClick={() => handleGenreFilter(genre)}
                   >
                     {genre}
                   </Badge>
                 ))}
               </div>
-              <p className="text-lg text-gray-300 mb-8 leading-relaxed">
+              <p className="text-xl text-gray-200 mb-10 leading-relaxed max-w-2xl">
                 {featuredContent.description}
               </p>
-              <div className="flex space-x-4">
+              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
                 <Button 
                   size="lg" 
-                  className="bg-white text-black hover:bg-gray-200"
+                  className="bg-white text-black hover:bg-gray-200 text-lg px-8 py-4 h-auto"
                   onClick={() => playContent(featuredContent)}
                   disabled={isPlaying}
                 >
-                  <Play className="mr-2 h-5 w-5" />
-                  {isPlaying ? 'Playing...' : 'Play'}
+                  <Play className="mr-3 h-6 w-6" />
+                  {isPlaying ? 'Playing...' : 'Watch Now'}
                 </Button>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="lg" variant="secondary" className="bg-gray-600 hover:bg-gray-700">
-                      <Info className="mr-2 h-5 w-5" />
+                    <Button size="lg" variant="secondary" className="bg-gray-600 hover:bg-gray-700 text-lg px-8 py-4 h-auto">
+                      <Info className="mr-3 h-6 w-6" />
                       More Info
                     </Button>
                   </DialogTrigger>
@@ -418,11 +419,11 @@ const Index = () => {
                   size="lg" 
                   variant="ghost" 
                   onClick={() => toggleMyList(featuredContent.id)}
-                  className="border border-gray-600 hover:bg-gray-800"
+                  className="border border-gray-600 hover:bg-gray-800 text-lg px-8 py-4 h-auto"
                 >
                   {myList.has(featuredContent.id) ? 
-                    <Check className="mr-2 h-5 w-5 text-red-500" /> : 
-                    <Plus className="mr-2 h-5 w-5 text-white" />
+                    <Check className="mr-3 h-6 w-6 text-red-500" /> : 
+                    <Plus className="mr-3 h-6 w-6 text-white" />
                   }
                   My List
                 </Button>
@@ -489,8 +490,8 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="font-bold text-red-600 mb-4">GanZa</h3>
-              <p className="text-gray-400 text-sm">Your premium streaming destination for African content</p>
+              <h3 className="font-bold text-red-600 mb-4 text-xl">GanZa</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">Your premier destination for authentic African storytelling and premium entertainment content.</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Browse</h4>
@@ -524,10 +525,26 @@ const Index = () => {
             <div>
               <h4 className="font-semibold mb-4">Account</h4>
               <div className="space-y-2 text-sm text-gray-400">
-                <button className="block hover:text-white transition-colors cursor-pointer">
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "Manage Profiles",
+                      description: "Profile management coming soon...",
+                    });
+                  }}
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
                   Manage Profiles
                 </button>
-                <button className="block hover:text-white transition-colors cursor-pointer">
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "Account Settings",
+                      description: "Opening account settings...",
+                    });
+                  }}
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
                   Account Settings
                 </button>
                 <button 
@@ -555,33 +572,57 @@ const Index = () => {
               </div>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Connect</h4>
+              <h4 className="font-semibold mb-4">Legal & Support</h4>
               <div className="space-y-2 text-sm text-gray-400">
-                <button className="block hover:text-white transition-colors cursor-pointer">
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "Privacy Policy",
+                      description: "We protect your data with industry-standard encryption and never share personal information without consent.",
+                    });
+                  }}
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
                   Privacy Policy
                 </button>
-                <button className="block hover:text-white transition-colors cursor-pointer">
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "Terms of Service",
+                      description: "By using GanZa, you agree to our fair use policy and content guidelines for respectful streaming.",
+                    });
+                  }}
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
                   Terms of Service
                 </button>
                 <button 
                   onClick={() => {
                     toast({
-                      title: "Contact Us",
-                      description: "Call us at +250796011540",
+                      title: "About GanZa",
+                      description: "GanZa celebrates African cinema and culture, bringing authentic stories from Rwanda and across the continent to global audiences.",
                     });
                   }}
                   className="block hover:text-white transition-colors cursor-pointer"
                 >
-                  Contact Us: +250796011540
-                </button>
-                <button className="block hover:text-white transition-colors cursor-pointer">
                   About GanZa
+                </button>
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "Contact Us",
+                      description: "Call us at +250796011540 or email support@ganza.rw",
+                    });
+                  }}
+                  className="block hover:text-white transition-colors cursor-pointer"
+                >
+                  Contact: +250796011540
                 </button>
               </div>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-            <p>&copy; 2024 GanZa by Pacifique. All rights reserved.</p>
+            <p>&copy; 2024 GanZa by Pacifique. All rights reserved. | Celebrating African Stories Worldwide</p>
           </div>
         </div>
       </footer>
