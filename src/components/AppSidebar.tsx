@@ -5,14 +5,11 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-// Sidebar navigation config
 const items = [
   {
     title: "Home",
@@ -43,23 +40,31 @@ interface AppSidebarProps {
 
 export function AppSidebar({ currentView, onNavigate }: AppSidebarProps) {
   return (
-    <Sidebar className="bg-[#181818] border-none shadow-xl min-h-screen z-50">
-      <SidebarContent>
+    <Sidebar className="bg-black border-none shadow-2xl min-h-screen w-16 px-0 py-4 flex items-center">
+      <SidebarContent className="flex flex-col items-center w-full h-full gap-6">
         <SidebarGroup>
-          <SidebarGroupLabel>
-            <span className="text-2xl font-bold text-red-600 px-2 tracking-wider">GanZa</span>
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} className="w-full flex">
                   <SidebarMenuButton
                     isActive={currentView === item.view}
                     onClick={() => onNavigate(item.view)}
-                    className={`flex items-center gap-3 px-3 py-2 text-lg ${currentView === item.view ? "text-white font-semibold bg-red-700/20" : "text-gray-400"} hover:text-white`}
+                    className={`relative flex flex-col items-center gap-1 w-full py-3 group
+                      ${currentView === item.view ? "text-red-600 font-semibold" : "text-gray-400"}
+                    `}
                   >
-                    <item.icon />
-                    <span className="hidden md:inline">{item.title}</span>
+                    {/* Active Indicator */}
+                    <span
+                      className={`absolute left-0 top-1/2 -translate-y-1/2 
+                        h-8 w-1 rounded-r-lg bg-red-600 transition-all
+                        ${currentView === item.view ? "opacity-100" : "opacity-0"}
+                      `}
+                    />
+                    <item.icon size={26} />
+                    <span className="text-xs font-semibold hidden xl:inline transition-all">
+                      {item.title}
+                    </span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

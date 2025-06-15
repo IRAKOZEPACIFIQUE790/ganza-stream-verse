@@ -218,10 +218,8 @@ const Index = () => {
         <AppSidebar currentView={currentView} onNavigate={handleNavigation} />
         
         {/* Main content area. Hide sidebar space on mobile */}
-        <main className="flex-1 flex flex-col min-h-screen ml-0 md:ml-0">
-          {/* Hero & search goes here */}
-          
-          {/* Search at the top right above hero */}
+        <main className="flex-1 flex flex-col min-h-screen ml-0 md:ml-0 bg-black">
+          {/* Top search bar */}
           <div className="flex justify-end pr-8 pt-8">
             <div className="relative w-full max-w-md ml-auto">
               <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -234,109 +232,52 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Modern Hero Banner */}
+          {/* HERO SECTION */}
           {!searchQuery && currentView === "home" && (
-            <section className="relative flex flex-col justify-between min-h-[55vh] md:min-h-[55vh] xl:min-h-[480px] px-8 pt-2 pb-8">
-              {/* Background image and overlay */}
+            <section className="relative flex flex-col min-h-[52vh] md:min-h-[55vh] xl:min-h-[450px] px-0 pb-4 pt-4 overflow-hidden">
+              {/* BG HERO IMAGE with dark overlay */}
               <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-20000 ease-out rounded-2xl overflow-hidden"
+                className="absolute inset-0 bg-cover bg-center"
                 style={{
-                  backgroundImage: `url(${featuredContent.backdrop})`,
-                  filter: "brightness(0.65)"
+                  backgroundImage: `linear-gradient(to right,rgba(0,0,0,0.93) 0%,rgba(0,0,0,0.60) 60%,rgba(0,0,0,0.15) 100%), url(${featuredContent.backdrop})`,
+                  filter: "brightness(1)"
                 }}
               ></div>
 
-              {/* Floating photos */}
-              <div className="absolute inset-0 pointer-events-none z-10">
-                {featuredContent.heroImages.map((image, index) => (
-                  <div
-                    key={index}
-                    className={`absolute opacity-25 blur-md hover:opacity-60 hover:blur-0 transition-all duration-1000 
-                      ${index === 0 ? "top-10 right-24 w-32 h-24" :
-                        index === 1 ? "top-36 right-64 w-28 h-20" :
-                        index === 2 ? "bottom-28 right-56 w-28 h-24" :
-                        "bottom-12 right-96 w-36 h-24"}`}
-                    style={{
-                      animation: "float 6s ease-in-out infinite",
-                      animationDelay: `${index * 0.4}s`
-                    }}
-                  >
+              {/* Hero Info as in Netflix */}
+              <div className="relative z-10 flex flex-col justify-end h-full pl-8 pt-10 pb-12">
+                <div className="max-w-2xl space-y-5">
+                  <div className="flex items-center space-x-4 mb-1">
                     <img
-                      src={image}
-                      alt={`Hero img ${index + 1}`}
-                      className="w-full h-full object-cover rounded-lg shadow-2xl border border-white/10"
+                      src="/favicon.ico"
+                      alt="GanZa"
+                      className="w-8 h-8 rounded"
                     />
+                    <span className="bg-red-600 text-xs text-white font-extrabold px-2 py-1 rounded mr-2 uppercase tracking-widest shadow-lg">
+                      Series
+                    </span>
+                    <span className="text-white text-lg font-bold uppercase tracking-wide px-2 py-1 rounded bg-black/60 backdrop-blur-sm">
+                      {featuredContent.title}
+                    </span>
                   </div>
-                ))}
-              </div>
-
-              {/* Hero Info */}
-              <div className="relative z-20 flex flex-col md:flex-row items-start md:items-end md:gap-8 gap-6 h-full">
-                <div className="flex flex-col gap-3 max-w-xl md:max-w-2xl xl:max-w-3xl mt-8 ml-1">
-                  {/* Badges row */}
-                  <div className="flex items-center space-x-4 mb-1 animate-fade-in">
-                    <Badge className="bg-red-600 text-white text-lg px-4 py-2 font-semibold shadow-lg">
-                      ⭐ {featuredContent.rating}
-                    </Badge>
-                    <Badge className="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 font-semibold shadow-lg animate-pulse">
-                      🏆 #1 Trending
-                    </Badge>
+                  <div className="flex gap-6 items-center font-semibold text-sm text-white/80">
+                    <span className="px-2 py-0.5 rounded bg-black/70 text-white">{featuredContent.year}</span>
+                    <span>{featuredContent.rating} IMDb</span>
+                    <span>{featuredContent.duration}</span>
                   </div>
-                  
-                  {/* Title */}
-                  <h1 className="text-4xl md:text-6xl hero-text-shadow bg-gradient-to-r from-white via-gray-100 to-red-100 bg-clip-text text-transparent leading-tight font-light animate-fade-in animate-delay-100">
+                  <h1 className="text-3xl md:text-5xl font-black text-white leading-tight drop-shadow-xl">
                     {featuredContent.title}
                   </h1>
-
-                  {/* Metadata */}
-                  <div className="flex flex-wrap items-center gap-5 mb-1 animate-fade-in animate-delay-200">
-                    <span className="text-gray-300 text-lg font-medium">{featuredContent.year}</span>
-                    <span className="text-gray-300 text-lg font-medium">{featuredContent.duration}</span>
-                    <span className="text-green-400 font-semibold">4K Ultra HD</span>
-                  </div>
-                  {/* Genre tags */}
-                  <div className="flex flex-wrap gap-3 mb-1 animate-fade-in animate-delay-300">
-                    {featuredContent.genre.map(genre => (
-                      <Badge
-                        key={genre}
-                        variant="outline"
-                        className="border-2 border-gray-400 hover:border-red-500 hover:bg-red-600/20 cursor-pointer transition-all duration-300 text-base px-4 py-2 font-medium backdrop-blur-sm bg-black/30"
-                        onClick={() => handleGenreFilter(genre)}
-                      >
-                        {genre}
-                      </Badge>
-                    ))}
-                  </div>
-                  {/* Description */}
-                  <p className="text-base md:text-xl text-gray-200 font-light animate-fade-in animate-delay-300 backdrop-blur-sm rounded-lg border border-white/10">
+                  <p className="text-white/90 text-base md:text-lg font-light">
                     {featuredContent.description}
                   </p>
-                  {/* Action buttons */}
-                  <div className="flex items-center gap-4 mt-4">
-                    <Button size="lg" className="bg-white text-black hover:bg-gray-200 font-bold shadow-2xl" onClick={() => playContent(featuredContent)} disabled={isPlaying}>
-                      <Play className="mr-4 h-7 w-7" fill="currentColor" />
-                      {isPlaying ? "Playing..." : "Watch Now"}
+                  <div className="flex gap-4 mt-5">
+                    <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white font-extrabold px-7 py-3 rounded-lg text-lg shadow-xl flex items-center gap-2" onClick={() => playContent(featuredContent)} disabled={isPlaying}>
+                      <Play className="mr-1 h-7 w-7" fill="currentColor" />
+                      {isPlaying ? "Playing..." : "Play"}
                     </Button>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button size="lg" variant="secondary" className="bg-gray-800/80 hover:bg-gray-700/80 text-xl px-8 py-4 h-auto font-bold backdrop-blur-sm border border-gray-600 hover:border-gray-500">
-                          <Info className="mr-4 h-7 w-7" />
-                          More Info
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-gray-900 border-gray-700 max-w-4xl">
-                        <DialogHeader>
-                          <DialogTitle className="text-2xl">{featuredContent.title}</DialogTitle>
-                          <DialogDescription>
-                            <img src={featuredContent.trailer} alt={featuredContent.title} className="w-full h-64 object-cover rounded mb-4" />
-                            {/* ... keep existing code (modal content) the same ... */}
-                          </DialogDescription>
-                        </DialogHeader>
-                      </DialogContent>
-                    </Dialog>
-                    <Button size="lg" variant="ghost" onClick={() => toggleMyList(featuredContent.id)} className="border-2 border-gray-600 hover:border-red-500 hover:bg-red-600/20 text-xl px-8 py-4 h-auto font-bold backdrop-blur-sm bg-black/30">
-                      {myList.has(featuredContent.id) ? <Check className="mr-4 h-7 w-7 text-red-500" /> : <Plus className="mr-4 h-7 w-7 text-white" />}
-                      My List
+                    <Button size="lg" variant="secondary" className="bg-white/85 text-black hover:bg-white px-7 py-3 rounded-lg text-lg font-bold shadow-xl border-none">
+                      Watch Trailer
                     </Button>
                   </div>
                 </div>
@@ -344,36 +285,49 @@ const Index = () => {
             </section>
           )}
 
-          {/* Content rows (use original sections, but now indented/flexed beside sidebar) */}
-          {!searchQuery && currentView === 'home' && <section className="py-16 space-y-12">
-              {contentRows.map((row, rowIndex) => <div key={rowIndex} className="container mx-auto px-4">
-                  <h2 className="text-2xl font-bold mb-6">{row.title}</h2>
-                  <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
-                    {row.items.map(item => <Card key={item.id} className="flex-shrink-0 w-48 bg-gray-900 border-gray-800 hover:scale-105 hover:bg-gray-800 transition-all duration-300 cursor-pointer group">
+          {/* Content Rows */}
+          {!searchQuery && currentView === "home" && (
+            <section className="flex flex-col gap-12 py-8 pr-2">
+              {contentRows.map((row, rowIndex) => (
+                <div key={rowIndex} className="ml-8">
+                  <h2 className="text-2xl font-bold text-white mb-4">
+                    {rowIndex === 0 ? "New this week" : row.title}
+                  </h2>
+                  <div className="flex space-x-5 overflow-x-auto pb-2 scrollbar-hide">
+                    {row.items.map(item => (
+                      <Card
+                        key={item.id}
+                        className="flex-shrink-0 w-48 bg-black/0 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer shadow-lg"
+                        style={{ minWidth: '12rem', boxShadow: "0 3px 16px #0009" }}
+                      >
                         <CardContent className="p-0 relative">
-                          <img src={item.image} alt={item.title} className="w-full h-72 object-cover rounded-t" />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                            <div className="flex space-x-2">
-                              <Button size="sm" className="bg-white text-black hover:bg-gray-200" onClick={() => playContent(item)}>
+                          <img src={item.image} alt={item.title} className="w-full h-72 object-cover" />
+                          <div className="absolute inset-0 bg-black/0 hover:bg-black/30 hover:backdrop-blur transition-colors duration-200 flex items-end justify-center opacity-0 hover:opacity-100">
+                            <div className="flex mb-4 space-x-2">
+                              <Button size="sm" className="bg-white text-black hover:bg-gray-100"
+                                onClick={() => playContent(item)}
+                              >
                                 <Play className="h-4 w-4" />
                               </Button>
-                              <Button size="sm" variant="ghost" onClick={e => {
-                        e.stopPropagation();
-                        toggleMyList(item.id);
-                      }} className="bg-black/50 hover:bg-black/70">
-                                {myList.has(item.id) ? <Check className="h-4 w-4 text-red-500" /> : <Plus className="h-4 w-4 text-white" />}
+                              <Button size="sm" variant="ghost" className="bg-black/40 hover:bg-black/70"
+                                onClick={e => { e.stopPropagation(); toggleMyList(item.id); }}
+                              >
+                                {myList.has(item.id) ? <Check className="h-4 w-4 text-red-600" /> : <Plus className="h-4 w-4 text-white" />}
                               </Button>
                             </div>
                           </div>
-                          <div className="p-3">
-                            <h3 className="font-semibold text-sm truncate">{item.title}</h3>
-                            <Badge variant="secondary" className="text-xs mt-2">★ {item.rating}</Badge>
+                          <div className="p-2 bg-black/70">
+                            <h3 className="font-semibold text-xs text-white truncate">{item.title}</h3>
+                            <Badge variant="secondary" className="text-xs mt-1">★ {item.rating}</Badge>
                           </div>
                         </CardContent>
-                      </Card>)}
+                      </Card>
+                    ))}
                   </div>
-                </div>)}
-            </section>}
+                </div>
+              ))}
+            </section>
+          )}
 
           {/* Search Results */}
           {searchQuery && <div className="pt-24 pb-8">
