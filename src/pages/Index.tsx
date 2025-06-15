@@ -17,7 +17,13 @@ const featuredContent = {
   genre: ["Documentary", "Culture", "Nature"],
   rating: "9.4",
   year: "2024",
-  duration: "3h 45m"
+  duration: "3h 45m",
+  heroImages: [
+    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1544198365-f5d60b6d8190?w=400&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?w=400&h=300&fit=crop"
+  ]
 };
 
 const contentRows = [
@@ -166,7 +172,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-sm">
+      <header className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 via-black/60 to-transparent backdrop-blur-md">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-8">
             <h1 className="text-3xl font-bold text-red-600 cursor-pointer" onClick={() => handleNavigation('home')}>GanZa</h1>
@@ -324,53 +330,118 @@ const Index = () => {
         </div>
       )}
 
-      {/* Hero Section */}
+      {/* Enhanced Hero Section */}
       {!searchQuery && currentView === 'home' && (
-        <section className="relative h-screen flex items-center">
+        <section className="relative min-h-screen flex items-center overflow-hidden">
+          {/* Main Background */}
           <div 
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0 bg-cover bg-center scale-105 transition-transform duration-20000 ease-out"
             style={{ backgroundImage: `url(${featuredContent.backdrop})` }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/40"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
           </div>
-          <div className="relative container mx-auto px-4 z-10">
-            <div className="max-w-3xl">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 hero-text-shadow">{featuredContent.title}</h1>
-              <div className="flex items-center space-x-4 mb-6">
-                <Badge className="bg-red-600 text-white text-lg px-3 py-1">★ {featuredContent.rating}</Badge>
-                <span className="text-gray-300 text-lg">{featuredContent.year}</span>
-                <span className="text-gray-300 text-lg">{featuredContent.duration}</span>
-                <Badge className="bg-green-600 text-white">NEW</Badge>
+
+          {/* Floating Photos */}
+          <div className="absolute inset-0 pointer-events-none">
+            {featuredContent.heroImages.map((image, index) => (
+              <div
+                key={index}
+                className={`absolute opacity-20 transform rotate-12 hover:rotate-0 transition-all duration-1000 ${
+                  index === 0 ? 'top-20 right-20 animate-float' : 
+                  index === 1 ? 'top-40 right-80 animate-float animate-delay-100' : 
+                  index === 2 ? 'bottom-40 right-40 animate-float animate-delay-200' : 
+                  'bottom-20 right-96 animate-float animate-delay-300'
+                }`}
+                style={{ animationDelay: `${index * 0.5}s` }}
+              >
+                <img 
+                  src={image} 
+                  alt={`Hero image ${index + 1}`} 
+                  className="w-48 h-36 object-cover rounded-lg shadow-2xl border border-white/20 backdrop-blur-sm"
+                />
               </div>
-              <div className="flex flex-wrap gap-3 mb-8">
+            ))}
+          </div>
+
+          {/* Main Content */}
+          <div className="relative container mx-auto px-4 z-10 flex items-center min-h-screen">
+            <div className="max-w-4xl">
+              {/* Badge Section */}
+              <div className="flex items-center space-x-4 mb-6 animate-fade-in">
+                <Badge className="bg-red-600 text-white text-lg px-4 py-2 font-semibold shadow-lg">
+                  ⭐ {featuredContent.rating}
+                </Badge>
+                <Badge className="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 font-semibold shadow-lg animate-pulse">
+                  🔥 TRENDING #1
+                </Badge>
+                <Badge className="bg-yellow-600 text-black px-4 py-2 font-semibold shadow-lg">
+                  🏆 AWARD WINNER
+                </Badge>
+              </div>
+
+              {/* Title with Gradient */}
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 hero-text-shadow bg-gradient-to-r from-white via-gray-100 to-red-100 bg-clip-text text-transparent leading-tight animate-fade-in animate-delay-100">
+                {featuredContent.title}
+              </h1>
+
+              {/* Metadata Row */}
+              <div className="flex flex-wrap items-center gap-6 mb-8 animate-fade-in animate-delay-200">
+                <span className="text-gray-300 text-xl font-medium border-l-4 border-red-600 pl-4">
+                  {featuredContent.year}
+                </span>
+                <span className="text-gray-300 text-xl font-medium">
+                  {featuredContent.duration}
+                </span>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-green-400 font-semibold">4K Ultra HD</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <span className="text-blue-400 font-semibold">Dolby Atmos</span>
+                </div>
+              </div>
+
+              {/* Genre Tags */}
+              <div className="flex flex-wrap gap-3 mb-10 animate-fade-in animate-delay-300">
                 {featuredContent.genre.map((genre) => (
                   <Badge 
                     key={genre} 
                     variant="outline" 
-                    className="text-white border-gray-400 cursor-pointer hover:bg-red-600 hover:border-red-600 transition-colors text-sm px-3 py-1"
+                    className="text-white border-2 border-gray-400 hover:border-red-500 hover:bg-red-600/20 cursor-pointer transition-all duration-300 text-base px-4 py-2 font-medium backdrop-blur-sm bg-black/30"
                     onClick={() => handleGenreFilter(genre)}
                   >
                     {genre}
                   </Badge>
                 ))}
               </div>
-              <p className="text-xl text-gray-200 mb-10 leading-relaxed max-w-2xl">
+
+              {/* Description */}
+              <p className="text-xl md:text-2xl text-gray-200 mb-12 leading-relaxed max-w-3xl font-light animate-fade-in animate-delay-300 backdrop-blur-sm bg-black/20 p-6 rounded-lg border border-white/10">
                 {featuredContent.description}
               </p>
-              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-6 animate-fade-in animate-delay-300">
                 <Button 
                   size="lg" 
-                  className="bg-white text-black hover:bg-gray-200 text-lg px-8 py-4 h-auto"
+                  className="bg-white text-black hover:bg-gray-200 text-xl px-10 py-6 h-auto font-bold shadow-2xl hover:shadow-white/20 transform hover:scale-105 transition-all duration-300"
                   onClick={() => playContent(featuredContent)}
                   disabled={isPlaying}
                 >
-                  <Play className="mr-3 h-6 w-6" />
+                  <Play className="mr-4 h-7 w-7" fill="currentColor" />
                   {isPlaying ? 'Playing...' : 'Watch Now'}
                 </Button>
+
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="lg" variant="secondary" className="bg-gray-600 hover:bg-gray-700 text-lg px-8 py-4 h-auto">
-                      <Info className="mr-3 h-6 w-6" />
+                    <Button 
+                      size="lg" 
+                      variant="secondary" 
+                      className="bg-gray-800/80 hover:bg-gray-700/80 text-xl px-10 py-6 h-auto font-bold backdrop-blur-sm border border-gray-600 hover:border-gray-500 transform hover:scale-105 transition-all duration-300"
+                    >
+                      <Info className="mr-4 h-7 w-7" />
                       More Info
                     </Button>
                   </DialogTrigger>
@@ -415,19 +486,43 @@ const Index = () => {
                     </DialogHeader>
                   </DialogContent>
                 </Dialog>
+
                 <Button 
                   size="lg" 
                   variant="ghost" 
                   onClick={() => toggleMyList(featuredContent.id)}
-                  className="border border-gray-600 hover:bg-gray-800 text-lg px-8 py-4 h-auto"
+                  className="border-2 border-gray-600 hover:border-red-500 hover:bg-red-600/20 text-xl px-10 py-6 h-auto font-bold backdrop-blur-sm bg-black/30 transform hover:scale-105 transition-all duration-300"
                 >
                   {myList.has(featuredContent.id) ? 
-                    <Check className="mr-3 h-6 w-6 text-red-500" /> : 
-                    <Plus className="mr-3 h-6 w-6 text-white" />
+                    <Check className="mr-4 h-7 w-7 text-red-500" /> : 
+                    <Plus className="mr-4 h-7 w-7 text-white" />
                   }
                   My List
                 </Button>
               </div>
+
+              {/* Additional Info Bar */}
+              <div className="mt-12 flex flex-wrap items-center gap-8 text-sm text-gray-400 animate-fade-in animate-delay-300">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  <span>Available in 15+ languages</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                  <span>Subtitles available</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                  <span>Director's commentary included</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-pulse"></div>
             </div>
           </div>
         </section>
@@ -634,6 +729,27 @@ const Index = () => {
         }
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(12deg); }
+          50% { transform: translateY(-20px) rotate(12deg); }
+        }
+        
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-delay-100 {
+          animation-delay: 0.5s;
+        }
+        
+        .animate-delay-200 {
+          animation-delay: 1s;
+        }
+        
+        .animate-delay-300 {
+          animation-delay: 1.5s;
         }
       `}</style>
     </div>
