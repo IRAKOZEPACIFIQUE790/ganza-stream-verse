@@ -217,10 +217,8 @@ const Index = () => {
         {/* Sidebar */}
         <AppSidebar currentView={currentView} onNavigate={handleNavigation} />
         
-        {/* Main content area. Hide sidebar space on mobile */}
-        <main className="flex-1 flex flex-col min-h-screen bg-black">
-          {/* Top search bar - REMOVED */}
-
+        {/* Main content area */}
+        <main className="flex-1 flex flex-col min-h-screen bg-black ml-0">
           {/* HERO SECTION */}
           {currentView === "home" && (
             <section className="relative flex flex-col min-h-[52vh] md:min-h-[55vh] xl:min-h-[450px] px-0 pb-4 pt-4 overflow-hidden">
@@ -350,7 +348,7 @@ const Index = () => {
                                       <Play className="h-3 w-3" />
                                     </Button>
                                     <Button size="sm" variant="ghost" onClick={() => toggleMyList(item.id)} className="h-6 w-6 p-0">
-                                      {myList.has(item.id) ? <Check className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3 text-white" />}
+                                      {myList.has(item.id) ? <Check className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-4 text-white" />}
                                     </Button>
                                   </div>
                                 </div>

@@ -45,31 +45,26 @@ interface AppSidebarProps {
 
 export function AppSidebar({ currentView, onNavigate }: AppSidebarProps) {
   return (
-    <Sidebar className="bg-black border-none shadow-2xl min-h-screen w-16 px-0 py-4 flex items-center" collapsible="icon">
-      <SidebarContent className="flex flex-col items-center w-full h-full gap-6">
-        <SidebarGroup>
+    <Sidebar className="bg-black border-none min-h-screen w-16" collapsible="icon">
+      <SidebarContent className="flex flex-col items-center w-full pt-8 pb-4">
+        <SidebarGroup className="w-full">
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-2">
               {items.map((item) => (
-                <SidebarMenuItem key={item.title} className="w-full flex">
+                <SidebarMenuItem key={item.title} className="w-full">
                   <SidebarMenuButton
                     isActive={currentView === item.view}
                     onClick={() => onNavigate(item.view)}
-                    className={`relative flex flex-col items-center gap-1 w-full py-3 group
-                      ${currentView === item.view ? "text-red-600 font-semibold" : "text-gray-400"}
+                    className={`relative flex flex-col items-center justify-center w-12 h-12 mx-auto rounded-lg transition-all duration-200 group hover:bg-gray-800/50
+                      ${currentView === item.view ? "text-white bg-gray-800/30" : "text-gray-400 hover:text-white"}
                     `}
                   >
-                    {/* Active Indicator */}
-                    <span
-                      className={`absolute left-0 top-1/2 -translate-y-1/2 
-                        h-6 w-1 rounded-r-lg bg-red-600 transition-all
-                        ${currentView === item.view ? "opacity-100" : "opacity-0"}
-                      `}
-                    />
-                    <item.icon size={26} />
-                    <span className="text-xs font-semibold hidden transition-all">
-                      {item.title}
-                    </span>
+                    {/* Active indicator - red dot on the left */}
+                    {currentView === item.view && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-red-600 rounded-r"></span>
+                    )}
+                    <item.icon size={24} className="mb-0" />
+                    <span className="sr-only">{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
