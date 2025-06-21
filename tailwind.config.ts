@@ -82,6 +82,7 @@ export default {
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
+				serif: ['Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
