@@ -34,8 +34,7 @@ const contentRows = [{
     title: "Rwandan Warriors",
     image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=300&h=450&fit=crop",
     rating: "8.9",
-    genre: ["Action"],
-    isFree: true
+    genre: ["Action"]
   }, {
     id: 2,
     title: "African Horizons",
@@ -308,13 +307,6 @@ const Index = () => {
                         >
                           <CardContent className="p-0 relative">
                             <img src={item.image} alt={item.title} className="w-full h-72 object-cover" />
-                            {item.isFree && (
-                              <div className="absolute top-2 left-2">
-                                <Badge className="bg-green-600 hover:bg-green-700 text-white font-bold text-xs px-2 py-1">
-                                  FREE TRIAL
-                                </Badge>
-                              </div>
-                            )}
                             <div className="absolute inset-0 bg-black/0 hover:bg-black/30 hover:backdrop-blur transition-colors duration-200 flex items-end justify-center opacity-0 hover:opacity-100">
                               <div className="flex mb-4 space-x-2">
                                 <Button size="sm" className="bg-white text-black hover:bg-gray-100"
