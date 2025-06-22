@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Play, Plus, Check } from 'lucide-react';
 
 interface SearchResultsProps {
@@ -67,86 +68,111 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   }
 
   return (
-    <div>
-      <h3 className="text-xl font-bold text-white mb-6 font-serif">
-        Search Results for "{searchQuery}" ({results.length} found)
-      </h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {results.map(item => (
-          <Card 
-            key={item.id} 
-            className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer group"
-          >
-            <CardContent className="p-0 relative">
-              <div className="relative w-full h-64">
-                {loadingImages.has(item.id) && (
-                  <div className="absolute inset-0 bg-gray-800 flex items-center justify-center rounded-t">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                  </div>
-                )}
-                <img 
-                  src={failedImages.has(item.id) ? getFallbackImage() : item.image}
-                  alt={item.title}
-                  className="w-full h-64 object-cover rounded-t"
-                  onError={() => handleImageError(item.id)}
-                  onLoad={() => handleImageLoad(item.id)}
-                  onLoadStart={() => handleImageLoadStart(item.id)}
-                />
-                {failedImages.has(item.id) && (
-                  <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                    Fallback Image
-                  </div>
-                )}
-              </div>
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                <div className="flex space-x-2">
-                  <Button 
-                    size="sm" 
-                    className="bg-white text-black hover:bg-gray-200" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onPlay(item);
-                    }}
-                    aria-label={`Play ${item.title}`}
-                  >
-                    <Play className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleList(item.id);
-                    }}
-                    className="bg-black/50 hover:bg-black/70"
-                    aria-label={myList.has(item.id) ? `Remove ${item.title} from list` : `Add ${item.title} to list`}
-                  >
-                    {myList.has(item.id) ? (
-                      <Check className="h-4 w-4 text-red-500" />
-                    ) : (
-                      <Plus className="h-4 w-4 text-white" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-              <div className="p-3">
-                <h3 className="font-semibold text-sm truncate font-serif text-white" title={item.title}>
-                  {item.title}
-                </h3>
-                <div className="flex items-center justify-between mt-2">
-                  <Badge variant="secondary" className="text-xs">★ {item.rating}</Badge>
-                  {item.genre && (
-                    <Badge variant="outline" className="text-xs text-gray-400 border-gray-600">
-                      {item.genre[0]}
-                    </Badge>
+    <TooltipProvider>
+      <div>
+        <h3 className="text-xl font-bold text-white mb-6 font-serif">
+          Search Results for "{searchQuery}" ({results.length} found)
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {results.map(item => (
+            <Card 
+              key={item.id} 
+              className="bg-gray-900 border-gray-800 transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-red-500/20 hover:border-red-500/30 cursor-pointer group hover:z-10 relative"
+            >
+              <CardContent className="p-0 relative overflow-hidden">
+                <div className="relative w-full h-64">
+                  {loadingImages.has(item.id) && (
+                    <div className="absolute inset-0 bg-gray-800 flex items-center justify-center rounded-t z-10">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    </div>
+                  )}
+                  <img 
+                    src={failedImages.has(item.id) ? getFallbackImage() : item.image}
+                    alt={item.title}
+                    className="w-full h-64 object-cover rounded-t transition-transform duration-300 group-hover:scale-105"
+                    onError={() => handleImageError(item.id)}
+                    onLoad={() => handleImageLoad(item.id)}
+                    onLoadStart={() => handleImageLoadStart(item.id)}
+                  />
+                  {failedImages.has(item.id) && (
+                    <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                      Fallback Image
+                    </div>
                   )}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/70 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <div className="flex space-x-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          className="bg-white text-black hover:bg-gray-200 hover:scale-110 transition-all duration-200 shadow-lg" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onPlay(item);
+                          }}
+                          aria-label={`Play ${item.title}`}
+                        >
+                          <Play className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Play {item.title}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleList(item.id);
+                          }}
+                          className="bg-black/50 hover:bg-black/80 hover:scale-110 transition-all duration-200 shadow-lg"
+                          aria-label={myList.has(item.id) ? `Remove ${item.title} from list` : `Add ${item.title} to list`}
+                        >
+                          {myList.has(item.id) ? (
+                            <Check className="h-4 w-4 text-red-500" />
+                          ) : (
+                            <Plus className="h-4 w-4 text-white" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{myList.has(item.id) ? 'Remove from My List' : 'Add to My List'}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className="p-3 bg-gray-900 group-hover:bg-gray-800 transition-colors duration-300">
+                  <h3 className="font-semibold text-sm truncate font-serif text-white group-hover:text-red-400 transition-colors duration-300" title={item.title}>
+                    {item.title}
+                  </h3>
+                  <div className="flex items-center justify-between mt-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge variant="secondary" className="text-xs hover:bg-yellow-500/20 hover:text-yellow-400 transition-colors duration-200 cursor-help">
+                          ★ {item.rating}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Rating: {item.rating}/10</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    {item.genre && (
+                      <Badge variant="outline" className="text-xs text-gray-400 border-gray-600 hover:border-red-500/50 hover:text-red-400 transition-colors duration-200">
+                        {item.genre[0]}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 
