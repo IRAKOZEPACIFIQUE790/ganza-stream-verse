@@ -504,38 +504,36 @@ const Index = () => {
                   <div>
                     <h4 className="font-semibold mb-4 font-serif">Legal & Support</h4>
                     <div className="space-y-2 text-sm text-gray-400 font-serif">
-                      <button onClick={() => {
-                      toast({
-                        title: "Privacy Policy",
-                        description: "We protect your data with industry-standard encryption and never share personal information without consent."
-                      });
-                    }} className="block hover:text-white transition-colors cursor-pointer">
+                      <a 
+                        href="https://ganza.rw/privacy" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block hover:text-white hover:underline transition-all duration-200 cursor-pointer"
+                      >
                         Privacy Policy
-                      </button>
-                      <button onClick={() => {
-                      toast({
-                        title: "Terms of Service",
-                        description: "By using GanZa, you agree to our fair use policy and content guidelines for respectful streaming."
-                      });
-                    }} className="block hover:text-white transition-colors cursor-pointer">
+                      </a>
+                      <a 
+                        href="https://ganza.rw/terms" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block hover:text-white hover:underline transition-all duration-200 cursor-pointer"
+                      >
                         Terms of Service
-                      </button>
-                      <button onClick={() => {
-                      toast({
-                        title: "About GanZa",
-                        description: "GanZa celebrates African cinema and culture, bringing authentic stories from Rwanda and across the continent to global audiences."
-                      });
-                    }} className="block hover:text-white transition-colors cursor-pointer">
+                      </a>
+                      <a 
+                        href="https://ganza.rw/about" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block hover:text-white hover:underline transition-all duration-200 cursor-pointer"
+                      >
                         About GanZa
-                      </button>
-                      <button onClick={() => {
-                      toast({
-                        title: "Contact Us",
-                        description: "Call us at +250796011540 or email support@ganza.rw"
-                      });
-                    }} className="block hover:text-white transition-colors cursor-pointer">
+                      </a>
+                      <a 
+                        href="tel:+250796011540" 
+                        className="block hover:text-white hover:underline transition-all duration-200 cursor-pointer"
+                      >
                         Contact: +250796011540
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -545,36 +543,7 @@ const Index = () => {
               </div>
             </footer>
 
-            <style>{`
-              .scrollbar-hide {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-              }
-              .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-              }
-              
-              @keyframes float {
-                0%, 100% { transform: translateY(0px) rotate(12deg); }
-                50% { transform: translateY(-20px) rotate(12deg); }
-              }
-              
-              .animate-float {
-                animation: float 6s ease-in-out infinite;
-              }
-              
-              .animate-delay-100 {
-                animation-delay: 0.5s;
-              }
-              
-              .animate-delay-200 {
-                animation-delay: 1s;
-              }
-              
-              .animate-delay-300 {
-                animation-delay: 1.5s;
-              }
-            `}</style>
+            {/* ... keep existing code (style tag) */}
           </main>
         </div>
       </SidebarProvider>
