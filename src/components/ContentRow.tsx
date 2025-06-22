@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,34 @@ const ContentRow: React.FC<ContentRowProps> = ({
   onToggleList,
   onSeeAll
 }) => {
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+  const [loadingImages, setLoadingImages] = useState<Set<number>>(new Set());
+
+  const handleImageError = (itemId: number) => {
+    setFailedImages(prev => new Set(prev).add(itemId));
+    setLoadingImages(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(itemId);
+      return newSet;
+    });
+  };
+
+  const handleImageLoad = (itemId: number) => {
+    setLoadingImages(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(itemId);
+      return newSet;
+    });
+  };
+
+  const handleImageLoadStart = (itemId: number) => {
+    setLoadingImages(prev => new Set(prev).add(itemId));
+  };
+
+  const getFallbackImage = () => {
+    return "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?w=300&h=450&fit=crop";
+  };
+
   return (
     <div className="ml-8">
       <div className="flex items-center justify-between mb-4">
@@ -45,12 +73,27 @@ const ContentRow: React.FC<ContentRowProps> = ({
             style={{ minWidth: '12rem', boxShadow: "0 3px 16px #0009" }}
           >
             <CardContent className="p-0 relative">
-              <img 
-                src={item.image} 
-                alt={item.title}
-                className="w-full h-72 object-cover"
-                loading="lazy"
-              />
+              <div className="relative w-full h-72">
+                {loadingImages.has(item.id) && (
+                  <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                  </div>
+                )}
+                <img 
+                  src={failedImages.has(item.id) ? getFallbackImage() : item.image}
+                  alt={item.title}
+                  className="w-full h-72 object-cover"
+                  loading="lazy"
+                  onError={() => handleImageError(item.id)}
+                  onLoad={() => handleImageLoad(item.id)}
+                  onLoadStart={() => handleImageLoadStart(item.id)}
+                />
+                {failedImages.has(item.id) && (
+                  <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                    Fallback Image
+                  </div>
+                )}
+              </div>
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 group-hover:backdrop-blur transition-colors duration-200 flex items-end justify-center opacity-0 group-hover:opacity-100">
                 <div className="flex mb-4 space-x-2">
                   <Button 

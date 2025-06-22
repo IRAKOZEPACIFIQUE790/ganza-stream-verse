@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,34 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   onPlay,
   onToggleList
 }) => {
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+  const [loadingImages, setLoadingImages] = useState<Set<number>>(new Set());
+
+  const handleImageError = (itemId: number) => {
+    setFailedImages(prev => new Set(prev).add(itemId));
+    setLoadingImages(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(itemId);
+      return newSet;
+    });
+  };
+
+  const handleImageLoad = (itemId: number) => {
+    setLoadingImages(prev => {
+      const newSet = prev);
+      newSet.delete(itemId);
+      return newSet;
+    });
+  };
+
+  const handleImageLoadStart = (itemId: number) => {
+    setLoadingImages(prev => new Set(prev).add(itemId));
+  };
+
+  const getFallbackImage = () => {
+    return "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?w=300&h=450&fit=crop";
+  };
+
   if (!searchQuery) {
     return (
       <div className="text-center py-16">
@@ -50,11 +78,26 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer group"
           >
             <CardContent className="p-0 relative">
-              <img 
-                src={item.image} 
-                alt={item.title}
-                className="w-full h-64 object-cover rounded-t" 
-              />
+              <div className="relative w-full h-64">
+                {loadingImages.has(item.id) && (
+                  <div className="absolute inset-0 bg-gray-800 flex items-center justify-center rounded-t">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  </div>
+                )}
+                <img 
+                  src={failedImages.has(item.id) ? getFallbackImage() : item.image}
+                  alt={item.title}
+                  className="w-full h-64 object-cover rounded-t"
+                  onError={() => handleImageError(item.id)}
+                  onLoad={() => handleImageLoad(item.id)}
+                  onLoadStart={() => handleImageLoadStart(item.id)}
+                />
+                {failedImages.has(item.id) && (
+                  <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                    Fallback Image
+                  </div>
+                )}
+              </div>
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                 <div className="flex space-x-2">
                   <Button 
