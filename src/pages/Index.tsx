@@ -133,7 +133,7 @@ const contentRows = [{
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedContent, setSelectedContent] = useState(null);
-  const [myList, setMyList] = useState(new Set());
+  const [myList, setMyList] = useState<Set<number>>(new Set<number>());
   const [currentUser, setCurrentUser] = useState('Profile 1');
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentView, setCurrentView] = useState('home');
