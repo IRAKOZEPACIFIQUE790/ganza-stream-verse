@@ -34,7 +34,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   const handleImageLoad = (itemId: number) => {
     setLoadingImages(prev => {
-      const newSet = prev);
+      const newSet = new Set(prev);
       newSet.delete(itemId);
       return newSet;
     });
