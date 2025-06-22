@@ -8,6 +8,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useToast } from '@/hooks/use-toast';
 import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import ProfileDropdown from '@/components/ProfileDropdown';
+import SearchResults from '@/components/SearchResults';
+import ContentRow from '@/components/ContentRow';
 
 // Mock data for content with African/Rwandan imagery
 const featuredContent = {
@@ -135,9 +138,24 @@ const Index = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentView, setCurrentView] = useState('home');
   const [selectedGenre, setSelectedGenre] = useState('');
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
   const {
     toast
   } = useToast();
+
+  // Enhanced search with live suggestions
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      const allContent = contentRows.flatMap(row => row.items);
+      const suggestions = allContent
+        .filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase()))
+        .slice(0, 5);
+      setSearchSuggestions(suggestions);
+    } else {
+      setSearchSuggestions([]);
+    }
+  }, [searchQuery]);
+
   const toggleMyList = contentId => {
     const newList = new Set(myList);
     if (newList.has(contentId)) {
@@ -155,15 +173,16 @@ const Index = () => {
     }
     setMyList(newList);
   };
+
   const playContent = content => {
     setIsPlaying(true);
     toast({
       title: "Playing Now",
       description: `Now playing: ${content.title}`
     });
-    // In a real app, this would navigate to video player
     setTimeout(() => setIsPlaying(false), 3000);
   };
+
   // Move handleNavigation out so it can be used in sidebar
   const handleNavigation = (view) => {
     setCurrentView(view);
@@ -174,6 +193,7 @@ const Index = () => {
       description: `Switched to ${view.charAt(0).toUpperCase() + view.slice(1)}`
     });
   };
+
   const handleGenreFilter = genre => {
     setSelectedGenre(genre);
     setCurrentView('genre');
@@ -183,6 +203,14 @@ const Index = () => {
       description: `Showing ${genre} content`
     });
   };
+
+  const handleSeeAll = (rowTitle) => {
+    toast({
+      title: "See All",
+      description: `Viewing all ${rowTitle} content`
+    });
+  };
+
   const filteredContent = searchQuery ? contentRows.flatMap(row => row.items).filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase())) : [];
   const myListContent = contentRows.flatMap(row => row.items).filter(item => myList.has(item.id));
   const movieContent = contentRows.flatMap(row => row.items).filter(item => Math.random() > 0.5);
@@ -225,6 +253,21 @@ const Index = () => {
           
           {/* Main content area */}
           <main className="flex-1 flex flex-col min-h-screen bg-black">
+            {/* Enhanced Header with Profile Dropdown */}
+            {currentView === 'search' && (
+              <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
+                <div className="flex items-center justify-between px-8 py-4">
+                  <div className="flex items-center gap-8">
+                    <h1 className="text-2xl font-bold text-red-600 font-serif">GanZa</h1>
+                  </div>
+                  <ProfileDropdown 
+                    currentUser={currentUser} 
+                    onProfileSwitch={setCurrentUser}
+                  />
+                </div>
+              </header>
+            )}
+
             {/* HERO SECTION */}
             {currentView === "home" && (
               <section className="relative flex flex-col min-h-[52vh] md:min-h-[55vh] xl:min-h-[450px] px-0 pb-4 pt-4 overflow-hidden">
@@ -294,42 +337,15 @@ const Index = () => {
             {currentView === "home" && (
               <section className="flex flex-col gap-12 py-8 pr-2">
                 {contentRows.map((row, rowIndex) => (
-                  <div key={rowIndex} className="ml-8">
-                    <h2 className="text-2xl font-bold text-white mb-4 font-serif">
-                      {rowIndex === 0 ? "New this week" : row.title}
-                    </h2>
-                    <div className="flex space-x-5 overflow-x-auto pb-2 scrollbar-hide">
-                      {row.items.map(item => (
-                        <Card
-                          key={item.id}
-                          className="flex-shrink-0 w-48 bg-black/0 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer shadow-lg"
-                          style={{ minWidth: '12rem', boxShadow: "0 3px 16px #0009" }}
-                        >
-                          <CardContent className="p-0 relative">
-                            <img src={item.image} alt={item.title} className="w-full h-72 object-cover" />
-                            <div className="absolute inset-0 bg-black/0 hover:bg-black/30 hover:backdrop-blur transition-colors duration-200 flex items-end justify-center opacity-0 hover:opacity-100">
-                              <div className="flex mb-4 space-x-2">
-                                <Button size="sm" className="bg-white text-black hover:bg-gray-100"
-                                  onClick={() => playContent(item)}
-                                >
-                                  <Play className="h-4 w-4" />
-                                </Button>
-                                <Button size="sm" variant="ghost" className="bg-black/40 hover:bg-black/70"
-                                  onClick={e => { e.stopPropagation(); toggleMyList(item.id); }}
-                                >
-                                  {myList.has(item.id) ? <Check className="h-4 w-4 text-red-600" /> : <Plus className="h-4 w-4 text-white" />}
-                                </Button>
-                              </div>
-                            </div>
-                            <div className="p-2 bg-black/70">
-                              <h3 className="font-semibold text-xs text-white truncate font-serif">{item.title}</h3>
-                              <Badge variant="secondary" className="text-xs mt-1">★ {item.rating}</Badge>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
+                  <ContentRow
+                    key={rowIndex}
+                    title={rowIndex === 0 ? "New this week" : row.title}
+                    items={row.items}
+                    myList={myList}
+                    onPlay={playContent}
+                    onToggleList={toggleMyList}
+                    onSeeAll={() => handleSeeAll(row.title)}
+                  />
                 ))}
               </section>
             )}
@@ -346,45 +362,43 @@ const Index = () => {
                       onChange={e => setSearchQuery(e.target.value)}
                       className="bg-gray-900 border-gray-800 focus:ring-red-600 focus:border-red-600 pl-14 pr-4 py-3 w-full rounded-md text-lg h-16 font-serif"
                       autoFocus
+                      aria-label="Search for movies and TV shows"
                     />
+                    
+                    {/* Live Search Suggestions */}
+                    {searchSuggestions.length > 0 && searchQuery && (
+                      <div className="absolute top-full left-0 right-0 bg-gray-900 border border-gray-800 rounded-b-md mt-1 max-h-60 overflow-y-auto z-10">
+                        {searchSuggestions.map(item => (
+                          <div
+                            key={item.id}
+                            className="flex items-center gap-3 p-3 hover:bg-gray-800 cursor-pointer"
+                            onClick={() => {
+                              setSearchQuery(item.title);
+                              setSearchSuggestions([]);
+                            }}
+                          >
+                            <img 
+                              src={item.image} 
+                              alt={item.title}
+                              className="w-12 h-16 object-cover rounded"
+                            />
+                            <div>
+                              <p className="text-white font-serif">{item.title}</p>
+                              <p className="text-gray-400 text-sm">★ {item.rating} • {item.genre?.[0] || 'Movie'}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   
-                  {searchQuery ? (
-                    filteredContent.length > 0 ? (
-                      <div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                          {filteredContent.map(item => <Card key={item.id} className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer">
-                              <CardContent className="p-0">
-                                <img src={item.image} alt={item.title} className="w-full h-64 object-cover rounded-t" />
-                                <div className="p-3">
-                                  <h3 className="font-semibold text-sm truncate font-serif">{item.title}</h3>
-                                  <div className="flex items-center justify-between mt-2">
-                                    <Badge variant="secondary" className="text-xs">★ {item.rating}</Badge>
-                                    <div className="flex space-x-1">
-                                      <Button size="sm" variant="ghost" onClick={() => playContent(item)} className="h-6 w-6 p-0">
-                                        <Play className="h-3 w-3" />
-                                      </Button>
-                                      <Button size="sm" variant="ghost" onClick={() => toggleMyList(item.id)} className="h-6 w-6 p-0">
-                                        {myList.has(item.id) ? <Check className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-4 text-white" />}
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>)}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-16">
-                        <p className="text-gray-400 font-serif">No results found for "{searchQuery}"</p>
-                      </div>
-                    )
-                  ) : (
-                    <div className="text-center py-16">
-                        <h3 className="text-2xl font-bold text-white mb-4 font-serif">What are you looking for?</h3>
-                        <p className="text-gray-400 font-serif">Search for movies, TV shows, and more.</p>
-                    </div>
-                  )}
+                  <SearchResults
+                    results={filteredContent}
+                    searchQuery={searchQuery}
+                    myList={myList}
+                    onPlay={playContent}
+                    onToggleList={toggleMyList}
+                  />
                 </div>
               </div>
             )}
