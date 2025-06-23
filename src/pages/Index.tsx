@@ -13,6 +13,7 @@ import SearchResults from '@/components/SearchResults';
 import ContentRow from '@/components/ContentRow';
 import MobileMenu from '@/components/MobileMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SafeImage from '@/components/SafeImage';
 
 // Mock data for content with African/Rwandan imagery
 const featuredContent = {
@@ -246,6 +247,10 @@ const Index = () => {
         return '';
     }
   };
+
+  // Add error logging for the component
+  console.log('Index component rendering, currentView:', currentView);
+
   return (
     <div className="font-serif bg-black text-white min-h-screen">
       <SidebarProvider defaultOpen={false} style={{ '--sidebar-width-icon': '4rem' } as React.CSSProperties}>
@@ -301,16 +306,16 @@ const Index = () => {
                 {/* African movie images floating in the background - Hidden on mobile for performance */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block">
                   <div className="absolute top-20 right-20 w-32 h-48 rounded-lg overflow-hidden opacity-20 transform rotate-12 animate-float">
-                    <img src={featuredContent.heroImages[0]} alt="African cinema" className="w-full h-full object-cover" />
+                    <SafeImage src={featuredContent.heroImages[0]} alt="African cinema" className="w-full h-full object-cover" />
                   </div>
                   <div className="absolute top-40 right-40 w-28 h-40 rounded-lg overflow-hidden opacity-15 transform -rotate-6 animate-float animate-delay-100">
-                    <img src={featuredContent.heroImages[1]} alt="African cinema" className="w-full h-full object-cover" />
+                    <SafeImage src={featuredContent.heroImages[1]} alt="African cinema" className="w-full h-full object-cover" />
                   </div>
                   <div className="absolute bottom-32 right-16 w-36 h-52 rounded-lg overflow-hidden opacity-10 transform rotate-6 animate-float animate-delay-200">
-                    <img src={featuredContent.heroImages[2]} alt="African cinema" className="w-full h-full object-cover" />
+                    <SafeImage src={featuredContent.heroImages[2]} alt="African cinema" className="w-full h-full object-cover" />
                   </div>
                   <div className="absolute top-60 right-60 w-24 h-36 rounded-lg overflow-hidden opacity-25 transform -rotate-12 animate-float animate-delay-300">
-                    <img src={featuredContent.heroImages[3]} alt="African cinema" className="w-full h-full object-cover" />
+                    <SafeImage src={featuredContent.heroImages[3]} alt="African cinema" className="w-full h-full object-cover" />
                   </div>
                 </div>
 
