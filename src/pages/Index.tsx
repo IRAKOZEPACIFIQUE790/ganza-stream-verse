@@ -11,6 +11,8 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import ProfileDropdown from '@/components/ProfileDropdown';
 import SearchResults from '@/components/SearchResults';
 import ContentRow from '@/components/ContentRow';
+import MobileMenu from '@/components/MobileMenu';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Mock data for content with African/Rwandan imagery
 const featuredContent = {
@@ -130,6 +132,7 @@ const contentRows = [{
     genre: ["Drama"]
   }]
 }];
+
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedContent, setSelectedContent] = useState(null);
@@ -139,9 +142,8 @@ const Index = () => {
   const [currentView, setCurrentView] = useState('home');
   const [selectedGenre, setSelectedGenre] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState([]);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   // Enhanced search with live suggestions
   useEffect(() => {
@@ -248,14 +250,30 @@ const Index = () => {
     <div className="font-serif bg-black text-white min-h-screen">
       <SidebarProvider defaultOpen={false} style={{ '--sidebar-width-icon': '4rem' } as React.CSSProperties}>
         <div className="flex min-h-screen w-full bg-black">
-          {/* Sidebar */}
-          <AppSidebar currentView={currentView} onNavigate={handleNavigation} />
+          {/* Desktop Sidebar - Hidden on mobile */}
+          <div className="hidden md:block">
+            <AppSidebar currentView={currentView} onNavigate={handleNavigation} />
+          </div>
           
           {/* Main content area */}
           <main className="flex-1 flex flex-col min-h-screen bg-black">
-            {/* Enhanced Header with Profile Dropdown */}
+            {/* Mobile Header - Always visible on mobile */}
+            <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-4">
+                  <MobileMenu currentView={currentView} onNavigate={handleNavigation} />
+                  <h1 className="text-xl font-bold text-red-600 font-serif">GanZa</h1>
+                </div>
+                <ProfileDropdown 
+                  currentUser={currentUser} 
+                  onProfileSwitch={setCurrentUser}
+                />
+              </div>
+            </header>
+
+            {/* Desktop Header - Only for search view */}
             {currentView === 'search' && (
-              <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
+              <header className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
                 <div className="flex items-center justify-between px-8 py-4">
                   <div className="flex items-center gap-8">
                     <h1 className="text-2xl font-bold text-red-600 font-serif">GanZa</h1>
@@ -268,9 +286,9 @@ const Index = () => {
               </header>
             )}
 
-            {/* HERO SECTION */}
+            {/* HERO SECTION - Enhanced mobile responsiveness */}
             {currentView === "home" && (
-              <section className="relative flex flex-col min-h-[52vh] md:min-h-[55vh] xl:min-h-[450px] px-0 pb-4 pt-4 overflow-hidden">
+              <section className="relative flex flex-col min-h-[45vh] md:min-h-[52vh] xl:min-h-[450px] px-0 pb-4 pt-16 md:pt-4 overflow-hidden">
                 {/* BG HERO IMAGE with dark overlay */}
                 <div
                   className="absolute inset-0 bg-cover bg-center"
@@ -280,8 +298,8 @@ const Index = () => {
                   }}
                 ></div>
 
-                {/* African movie images floating in the background */}
-                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {/* African movie images floating in the background - Hidden on mobile for performance */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block">
                   <div className="absolute top-20 right-20 w-32 h-48 rounded-lg overflow-hidden opacity-20 transform rotate-12 animate-float">
                     <img src={featuredContent.heroImages[0]} alt="African cinema" className="w-full h-full object-cover" />
                   </div>
@@ -296,35 +314,44 @@ const Index = () => {
                   </div>
                 </div>
 
-                {/* Hero Info */}
-                <div className="relative z-10 flex flex-col justify-end h-full pl-8 pt-10 pb-12">
-                  <div className="max-w-2xl space-y-5">
-                    <div className="flex items-center space-x-4 mb-1">
-                      <span className="bg-red-600 text-xs text-white font-extrabold px-2 py-1 rounded mr-2 uppercase tracking-widest shadow-lg">
+                {/* Hero Info - Enhanced mobile layout */}
+                <div className="relative z-10 flex flex-col justify-end h-full px-4 md:pl-8 pt-6 md:pt-10 pb-8 md:pb-12">
+                  <div className="max-w-2xl space-y-3 md:space-y-5">
+                    <div className="flex items-center space-x-2 md:space-x-4 mb-1">
+                      <span className="bg-red-600 text-xs text-white font-extrabold px-2 py-1 rounded mr-1 md:mr-2 uppercase tracking-widest shadow-lg">
                         Series
                       </span>
-                      <span className="text-white text-lg font-bold uppercase tracking-wide px-2 py-1 rounded bg-black/60 backdrop-blur-sm">
+                      <span className="text-white text-sm md:text-lg font-bold uppercase tracking-wide px-2 py-1 rounded bg-black/60 backdrop-blur-sm">
                         {featuredContent.title}
                       </span>
                     </div>
-                    <div className="flex gap-6 items-center font-semibold text-sm text-white/80">
+                    <div className="flex gap-3 md:gap-6 items-center font-semibold text-xs md:text-sm text-white/80">
                       <span className="px-2 py-0.5 rounded bg-black/70 text-white">{featuredContent.year}</span>
                       <span>{featuredContent.rating} IMDb</span>
-                      <span>{featuredContent.duration}</span>
+                      <span className="hidden sm:inline">{featuredContent.duration}</span>
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-black text-white leading-tight drop-shadow-xl font-serif">
+                    <h1 className="text-2xl md:text-3xl xl:text-5xl font-black text-white leading-tight drop-shadow-xl font-serif">
                       {featuredContent.title}
                     </h1>
-                    <p className="text-white/90 text-base md:text-lg font-light font-serif">
+                    <p className="text-white/90 text-sm md:text-base xl:text-lg font-light font-serif line-clamp-3 md:line-clamp-none">
                       {featuredContent.description}
                     </p>
-                    <div className="flex gap-4 mt-5">
-                      <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white font-extrabold px-7 py-3 rounded-lg text-lg shadow-xl flex items-center gap-2 font-serif" onClick={() => playContent(featuredContent)} disabled={isPlaying}>
-                        <Play className="mr-1 h-7 w-7" fill="currentColor" />
+                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mt-4 md:mt-5">
+                      <Button 
+                        size={isMobile ? "default" : "lg"} 
+                        className="bg-red-600 hover:bg-red-700 text-white font-extrabold px-6 md:px-7 py-2 md:py-3 rounded-lg text-base md:text-lg shadow-xl flex items-center justify-center gap-2 font-serif" 
+                        onClick={() => playContent(featuredContent)} 
+                        disabled={isPlaying}
+                      >
+                        <Play className="mr-1 h-5 w-5 md:h-7 md:w-7" fill="currentColor" />
                         {isPlaying ? "Playing..." : "Play"}
                       </Button>
-                      <Button size="lg" variant="secondary" className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm px-7 py-3 rounded-lg text-lg font-bold shadow-xl border border-white/30 flex items-center gap-2 font-serif">
-                        <Info className="mr-1 h-7 w-7" />
+                      <Button 
+                        size={isMobile ? "default" : "lg"} 
+                        variant="secondary" 
+                        className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm px-6 md:px-7 py-2 md:py-3 rounded-lg text-base md:text-lg font-bold shadow-xl border border-white/30 flex items-center justify-center gap-2 font-serif"
+                      >
+                        <Info className="mr-1 h-5 w-5 md:h-7 md:w-7" />
                         More Info
                       </Button>
                     </div>
@@ -333,9 +360,9 @@ const Index = () => {
               </section>
             )}
 
-            {/* Content Rows */}
+            {/* Content Rows - Enhanced mobile spacing */}
             {currentView === "home" && (
-              <section className="flex flex-col gap-12 py-8 pr-2">
+              <section className="flex flex-col gap-8 md:gap-12 py-6 md:py-8 px-2 md:pr-2">
                 {contentRows.map((row, rowIndex) => (
                   <ContentRow
                     key={rowIndex}
@@ -350,22 +377,22 @@ const Index = () => {
               </section>
             )}
 
-            {/* Search View */}
+            {/* Search View - Enhanced mobile layout */}
             {currentView === 'search' && (
-              <div className="pt-24 pb-8 w-full">
-                <div className="container mx-auto px-4">
-                  <div className="relative w-full max-w-xl mx-auto mb-10">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 pointer-events-none" />
+              <div className="pt-20 md:pt-24 pb-8 w-full px-4 md:px-0">
+                <div className="container mx-auto md:px-4">
+                  <div className="relative w-full max-w-xl mx-auto mb-8 md:mb-10">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 md:h-6 md:w-6 text-gray-400 pointer-events-none" />
                     <Input
                       placeholder="Search for titles, genres, people..."
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
-                      className="bg-gray-900 border-gray-800 focus:ring-red-600 focus:border-red-600 pl-14 pr-4 py-3 w-full rounded-md text-lg h-16 font-serif"
+                      className="bg-gray-900 border-gray-800 focus:ring-red-600 focus:border-red-600 pl-12 md:pl-14 pr-4 py-3 w-full rounded-md text-base md:text-lg h-12 md:h-16 font-serif"
                       autoFocus
                       aria-label="Search for movies and TV shows"
                     />
                     
-                    {/* Live Search Suggestions */}
+                    {/* Live Search Suggestions - Mobile optimized */}
                     {searchSuggestions.length > 0 && searchQuery && (
                       <div className="absolute top-full left-0 right-0 bg-gray-900 border border-gray-800 rounded-b-md mt-1 max-h-60 overflow-y-auto z-10">
                         {searchSuggestions.map(item => (
@@ -380,11 +407,11 @@ const Index = () => {
                             <img 
                               src={item.image} 
                               alt={item.title}
-                              className="w-12 h-16 object-cover rounded"
+                              className="w-10 h-14 md:w-12 md:h-16 object-cover rounded"
                             />
                             <div>
-                              <p className="text-white font-serif">{item.title}</p>
-                              <p className="text-gray-400 text-sm">★ {item.rating} • {item.genre?.[0] || 'Movie'}</p>
+                              <p className="text-white font-serif text-sm md:text-base">{item.title}</p>
+                              <p className="text-gray-400 text-xs md:text-sm">★ {item.rating} • {item.genre?.[0] || 'Movie'}</p>
                             </div>
                           </div>
                         ))}
@@ -403,47 +430,54 @@ const Index = () => {
               </div>
             )}
 
-            {/* Category View (Movies, Shows, My List, Genre) */}
+            {/* Category View - Enhanced mobile grid */}
             {currentView !== 'home' && currentView !== 'search' && (
-              <div className="pt-24 pb-8">
-                <div className="container mx-auto px-4">
-                  <h2 className="text-3xl font-bold mb-8 font-serif">{getCurrentTitle()}</h2>
-                  {getCurrentContent().length > 0 ? <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                      {getCurrentContent().map(item => <Card key={item.id} className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer group">
+              <div className="pt-20 md:pt-24 pb-8 px-4 md:px-0">
+                <div className="container mx-auto md:px-4">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 font-serif">{getCurrentTitle()}</h2>
+                  {getCurrentContent().length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+                      {getCurrentContent().map(item => (
+                        <Card key={item.id} className="bg-gray-900 border-gray-800 hover:scale-105 transition-transform duration-300 cursor-pointer group">
                           <CardContent className="p-0 relative">
-                            <img src={item.image} alt={item.title} className="w-full h-64 object-cover rounded-t" />
+                            <img src={item.image} alt={item.title} className="w-full h-48 md:h-64 object-cover rounded-t" />
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                               <div className="flex space-x-2">
                                 <Button size="sm" className="bg-white text-black hover:bg-gray-200" onClick={() => playContent(item)}>
-                                  <Play className="h-4 w-4" />
+                                  <Play className="h-3 w-3 md:h-4 md:w-4" />
                                 </Button>
                                 <Button size="sm" variant="ghost" onClick={e => {
-                          e.stopPropagation();
-                          toggleMyList(item.id);
-                        }} className="bg-black/50 hover:bg-black/70">
-                                  {myList.has(item.id) ? <Check className="h-4 w-4 text-red-500" /> : <Plus className="h-4 w-4 text-white" />}
+                                  e.stopPropagation();
+                                  toggleMyList(item.id);
+                                }} className="bg-black/50 hover:bg-black/70">
+                                  {myList.has(item.id) ? <Check className="h-3 w-3 md:h-4 md:w-4 text-red-500" /> : <Plus className="h-3 w-3 md:h-4 md:w-4 text-white" />}
                                 </Button>
                               </div>
                             </div>
-                            <div className="p-3">
-                              <h3 className="font-semibold text-sm truncate font-serif">{item.title}</h3>
-                              <Badge variant="secondary" className="text-xs mt-2">★ {item.rating}</Badge>
+                            <div className="p-2 md:p-3">
+                              <h3 className="font-semibold text-xs md:text-sm truncate font-serif">{item.title}</h3>
+                              <Badge variant="secondary" className="text-xs mt-1 md:mt-2">★ {item.rating}</Badge>
                             </div>
                           </CardContent>
-                        </Card>)}
-                    </div> : <div className="text-center py-16">
-                      <p className="text-gray-400 font-serif">
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-16">
+                      <p className="text-gray-400 font-serif text-sm md:text-base">
                         {currentView === 'mylist' ? 'Your list is empty. Add some content to get started!' : currentView === 'genre' ? `No ${selectedGenre} content available.` : 'No content available in this category.'}
                       </p>
-                    </div>}
+                    </div>
+                  )}
                 </div>
-              </div>)}
+              </div>
+            )}
 
-            {/* Footer */}
-            <footer className="bg-gray-900 py-12 mt-16">
+            {/* Footer - Enhanced mobile layout */}
+            <footer className="bg-gray-900 py-8 md:py-12 mt-12 md:mt-16">
               <div className="container mx-auto px-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                  <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                  <div className="sm:col-span-2 lg:col-span-1">
                     <h3 className="font-bold text-red-600 mb-4 text-xl font-serif">GanZa</h3>
                     <p className="text-gray-400 text-sm leading-relaxed font-serif">Your premier destination for authentic African storytelling and premium entertainment content.</p>
                   </div>
@@ -537,13 +571,17 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
-                <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm font-serif">
+                <div className="border-t border-gray-800 mt-6 md:mt-8 pt-6 md:pt-8 text-center text-gray-400 text-xs md:text-sm font-serif">
                   <p>&copy; 2024 GanZa by Pacifique. All rights reserved. | Celebrating African Stories Worldwide</p>
                 </div>
               </div>
             </footer>
 
-            {/* ... keep existing code (style tag) */}
+            <style>
+              {`
+                /* Add any custom styles here */
+              `}
+            </style>
           </main>
         </div>
       </SidebarProvider>
