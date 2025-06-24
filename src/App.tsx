@@ -15,9 +15,6 @@ const queryClient = new QueryClient({
         console.error('Query failed:', error);
         return failureCount < 3;
       },
-      onError: (error) => {
-        console.error('Query error:', error);
-      },
     },
   },
 });
