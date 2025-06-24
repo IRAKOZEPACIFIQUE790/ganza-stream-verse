@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useMemo } from 'react';
 import { Play, Plus, Info, Search, User, ChevronDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -146,38 +147,63 @@ const Index = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
+  // Memoize content categorization to prevent random changes on re-renders
+  const categorizedContent = useMemo(() => {
+    const allContent = contentRows.flatMap(row => row.items);
+    
+    // Use consistent logic based on item properties instead of Math.random()
+    const movieContent = allContent.filter(item => 
+      item.genre && (
+        item.genre.includes('Action') || 
+        item.genre.includes('Adventure') || 
+        item.genre.includes('Thriller')
+      )
+    );
+    
+    const showContent = allContent.filter(item => 
+      item.genre && item.genre.includes('Drama')
+    );
+
+    return {
+      all: allContent,
+      movies: movieContent,
+      shows: showContent
+    };
+  }, []); // Empty dependency array since contentRows is static
+
   // Enhanced search with live suggestions
   useEffect(() => {
     if (searchQuery.length > 0) {
-      const allContent = contentRows.flatMap(row => row.items);
-      const suggestions = allContent
+      const suggestions = categorizedContent.all
         .filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase()))
         .slice(0, 5);
       setSearchSuggestions(suggestions);
     } else {
       setSearchSuggestions([]);
     }
-  }, [searchQuery]);
+  }, [searchQuery, categorizedContent.all]);
 
-  const toggleMyList = contentId => {
-    const newList = new Set(myList);
-    if (newList.has(contentId)) {
-      newList.delete(contentId);
-      toast({
-        title: "Removed from My List",
-        description: "Content has been removed from your list."
-      });
-    } else {
-      newList.add(contentId);
-      toast({
-        title: "Added to My List",
-        description: "Content has been added to your list."
-      });
-    }
-    setMyList(newList);
+  const toggleMyList = (contentId: number) => {
+    setMyList(prevList => {
+      const newList = new Set(prevList);
+      if (newList.has(contentId)) {
+        newList.delete(contentId);
+        toast({
+          title: "Removed from My List",
+          description: "Content has been removed from your list."
+        });
+      } else {
+        newList.add(contentId);
+        toast({
+          title: "Added to My List",
+          description: "Content has been added to your list."
+        });
+      }
+      return newList;
+    });
   };
 
-  const playContent = content => {
+  const playContent = (content: any) => {
     setIsPlaying(true);
     toast({
       title: "Playing Now",
@@ -187,7 +213,7 @@ const Index = () => {
   };
 
   // Move handleNavigation out so it can be used in sidebar
-  const handleNavigation = (view) => {
+  const handleNavigation = (view: string) => {
     setCurrentView(view);
     setSearchQuery('');
     setSelectedGenre('');
@@ -197,7 +223,7 @@ const Index = () => {
     });
   };
 
-  const handleGenreFilter = genre => {
+  const handleGenreFilter = (genre: string) => {
     setSelectedGenre(genre);
     setCurrentView('genre');
     setSearchQuery('');
@@ -207,32 +233,51 @@ const Index = () => {
     });
   };
 
-  const handleSeeAll = (rowTitle) => {
+  const handleSeeAll = (rowTitle: string) => {
     toast({
       title: "See All",
       description: `Viewing all ${rowTitle} content`
     });
   };
 
-  const filteredContent = searchQuery ? contentRows.flatMap(row => row.items).filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase())) : [];
-  const myListContent = contentRows.flatMap(row => row.items).filter(item => myList.has(item.id));
-  const movieContent = contentRows.flatMap(row => row.items).filter(item => Math.random() > 0.5);
-  const showContent = contentRows.flatMap(row => row.items).filter(item => !movieContent.includes(item));
-  const genreContent = contentRows.flatMap(row => row.items).filter(item => item.genre && item.genre.some(g => g.toLowerCase() === selectedGenre.toLowerCase()));
+  // Stable content filtering that doesn't change on re-renders
+  const getFilteredContent = useMemo(() => {
+    const filteredContent = searchQuery 
+      ? categorizedContent.all.filter(item => 
+          item.title.toLowerCase().includes(searchQuery.toLowerCase())
+        ) 
+      : [];
+    
+    const myListContent = categorizedContent.all.filter(item => myList.has(item.id));
+    
+    const genreContent = categorizedContent.all.filter(item => 
+      item.genre && item.genre.some((g: string) => g.toLowerCase() === selectedGenre.toLowerCase())
+    );
+
+    return {
+      search: filteredContent,
+      mylist: myListContent,
+      movies: categorizedContent.movies,
+      shows: categorizedContent.shows,
+      genre: genreContent
+    };
+  }, [searchQuery, myList, selectedGenre, categorizedContent]);
+
   const getCurrentContent = () => {
     switch (currentView) {
       case 'movies':
-        return movieContent;
+        return getFilteredContent.movies;
       case 'shows':
-        return showContent;
+        return getFilteredContent.shows;
       case 'mylist':
-        return myListContent;
+        return getFilteredContent.mylist;
       case 'genre':
-        return genreContent;
+        return getFilteredContent.genre;
       default:
         return [];
     }
   };
+
   const getCurrentTitle = () => {
     switch (currentView) {
       case 'movies':
@@ -425,7 +470,7 @@ const Index = () => {
                   </div>
                   
                   <SearchResults
-                    results={filteredContent}
+                    results={getFilteredContent.search}
                     searchQuery={searchQuery}
                     myList={myList}
                     onPlay={playContent}
